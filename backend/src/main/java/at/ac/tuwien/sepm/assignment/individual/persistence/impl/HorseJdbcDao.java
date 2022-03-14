@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.assignment.individual.persistence.impl;
 
 import at.ac.tuwien.sepm.assignment.individual.entity.Horse;
+import at.ac.tuwien.sepm.assignment.individual.entity.Sex;
 import at.ac.tuwien.sepm.assignment.individual.exception.PersistenceException;
 import at.ac.tuwien.sepm.assignment.individual.persistence.HorseDao;
 import org.springframework.dao.DataAccessException;
@@ -35,6 +36,10 @@ public class HorseJdbcDao implements HorseDao {
         Horse horse = new Horse();
         horse.setId(result.getLong("id"));
         horse.setName(result.getString("name"));
+        horse.setDescription(result.getString("description"));
+        horse.setBirthdate(result.getDate("birthdate").toLocalDate());
+        horse.setSex(Sex.valueOf(result.getString("sex")));
+        horse.setOwner(result.getString("owner"));
         return horse;
     }
 }
