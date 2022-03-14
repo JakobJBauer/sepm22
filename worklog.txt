@@ -3,5 +3,7 @@ Jakob Johannes Bauer
 
 08.03.2022 1h Environment Setup
 09.03.2022 1h Read Assignment
+13.03.2022 3h Environment and Database fix
+13.03.2022 3h US 1
 
-Total work time: 2h
+Total work time: 8h
