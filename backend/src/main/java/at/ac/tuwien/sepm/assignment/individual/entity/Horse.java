@@ -10,6 +10,17 @@ public class Horse {
     private Sex sex;
     private String owner;
 
+    public Horse() {}
+
+    public Horse(Long id, String name, String description, LocalDate birthdate, Sex sex, String owner) {
+        this.id = id;
+        this.name =name;
+        this.description = description;
+        this.birthdate = birthdate;
+        this.sex = sex;
+        this.owner = owner;
+    }
+
     public Long getId() {
         return id;
     }

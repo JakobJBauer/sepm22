@@ -17,4 +17,15 @@ public class HorseMapper {
                 horse.getOwner()
         );
     }
+
+    public Horse dtoToEntity(HorseDto horseDto, long id) {
+        return new Horse(
+                id,
+                horseDto.name(),
+                horseDto.description(),
+                horseDto.birthdate(),
+                horseDto.sex(),
+                horseDto.owner()
+        );
+    }
 }

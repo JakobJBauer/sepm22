@@ -1,11 +1,12 @@
 package at.ac.tuwien.sepm.assignment.individual.rest;
 
+import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
 import at.ac.tuwien.sepm.assignment.individual.mapper.HorseMapper;
 import at.ac.tuwien.sepm.assignment.individual.dto.HorseDto;
 import at.ac.tuwien.sepm.assignment.individual.service.HorseService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.stream.Stream;
 
@@ -24,5 +25,26 @@ public class HorseEndpoint {
     public Stream<HorseDto> allHorses() {
         return service.allHorses().stream()
                 .map(mapper::entityToDto);
+    }
+
+    @PutMapping(path = "/{horseId}")
+    public HorseDto updateHorse(
+            @RequestBody HorseDto horseDto,
+            @PathVariable("horseId") long horseId
+    ) {
+        try {
+            return mapper.entityToDto(
+                    service.updateHorse(
+                            mapper.dtoToEntity(
+                                    horseDto,
+                                    horseId
+                            )
+                    )
+            );
+        } catch (NoResultException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "entity not found", e
+            );
+        }
     }
 }
