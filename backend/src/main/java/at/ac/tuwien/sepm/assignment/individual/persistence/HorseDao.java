@@ -14,4 +14,6 @@ public interface HorseDao {
      * @return a list of all stored horses
      */
     List<Horse> getAll();
+
+    Horse updateHorse(Horse horse);
 }
