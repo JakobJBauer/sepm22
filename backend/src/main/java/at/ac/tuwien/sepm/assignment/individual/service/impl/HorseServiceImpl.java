@@ -19,4 +19,9 @@ public class HorseServiceImpl implements HorseService {
     public List<Horse> allHorses() {
         return dao.getAll();
     }
+
+    @Override
+    public Horse updateHorse(Horse horse) {
+        return dao.updateHorse(horse);
+    }
 }

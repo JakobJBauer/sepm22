@@ -13,4 +13,6 @@ public interface HorseService {
      * @return list of all stored horses
      */
     List<Horse> allHorses();
+
+    Horse updateHorse(Horse horse);
 }
