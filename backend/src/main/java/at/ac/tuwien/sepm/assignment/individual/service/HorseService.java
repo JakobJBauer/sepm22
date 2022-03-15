@@ -16,6 +16,8 @@ public interface HorseService {
 
     Horse getHorseById(long id);
 
+    Horse createHorse(Horse horse);
+
     Horse updateHorse(Horse horse);
 
     void deleteHorseById(long id);

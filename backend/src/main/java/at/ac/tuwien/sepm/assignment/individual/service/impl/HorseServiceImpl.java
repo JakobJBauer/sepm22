@@ -26,6 +26,11 @@ public class HorseServiceImpl implements HorseService {
     }
 
     @Override
+    public Horse createHorse(Horse horse) {
+        return dao.createHorse(horse);
+    }
+
+    @Override
     public Horse updateHorse(Horse horse) {
         return dao.updateHorse(horse);
     }
