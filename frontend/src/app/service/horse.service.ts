@@ -28,6 +28,10 @@ export class HorseService {
     return this.http.get<Horse>(baseUri + '/' + id.toString());
   }
 
+  create(horse: Horse): Observable<Horse> {
+    return this.http.post<Horse>(baseUri + '/create', horse);
+  }
+
   update(horse: Horse, id: number): Observable<Horse> {
     return this.http.put<Horse>(baseUri + '/' + id.toString(), horse);
   }
