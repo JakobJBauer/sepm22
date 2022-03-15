@@ -7,6 +7,8 @@ import at.ac.tuwien.sepm.assignment.individual.exception.PersistenceException;
 import at.ac.tuwien.sepm.assignment.individual.persistence.HorseDao;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -17,6 +19,9 @@ public class HorseJdbcDao implements HorseDao {
     private static final String TABLE_NAME = "horse";
     private static final String SQL_SELECT_ALL = "SELECT * FROM " + TABLE_NAME;
     private static final String SQL_SELECT_ONE = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
+    private static final String SQL_CREATE = "INSERT INTO " + TABLE_NAME +
+            " (name, description, birthdate, sex, owner)" +
+            "VALUES (?, ?, ?, ?, ?)";
     private static final String SQL_UPDATE_BY_ID = "UPDATE " + TABLE_NAME +
             " SET name = ?, description = ?, birthdate = ?, sex = ?, owner = ?" +
             " WHERE id = ?";
@@ -48,6 +53,28 @@ public class HorseJdbcDao implements HorseDao {
             return horses.get(0);
         } catch (DataAccessException e) {
             throw new PersistenceException("Could not read Horse " + id, e);
+        }
+    }
+
+    @Override
+    public Horse createHorse(Horse horse) {
+        try {
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            jdbcTemplate.update(connection -> {
+                PreparedStatement stmt = connection.prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS);
+                stmt.setString(1, horse.getName());
+                stmt.setString(2, horse.getDescription());
+                stmt.setDate(3, Date.valueOf(horse.getBirthdate()));
+                stmt.setString(4, horse.getSex().toString());
+                stmt.setString(5, horse.getOwner());
+                return stmt;
+            }, keyHolder);
+
+            horse.setId(((Number)keyHolder.getKeys().get("id")).longValue());
+
+            return horse;
+        } catch (DataAccessException e) {
+            throw new PersistenceException("Could not create a new Horse ", e);
         }
     }
 
