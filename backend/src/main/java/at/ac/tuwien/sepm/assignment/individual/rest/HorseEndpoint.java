@@ -58,4 +58,17 @@ public class HorseEndpoint {
             );
         }
     }
+
+    @DeleteMapping(path="/{horseId}")
+    public void deleteHorseById(
+            @PathVariable("horseId") long horseId
+    ) {
+        try {
+            service.deleteHorseById(horseId);
+        } catch (NoResultException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "entity not found", e
+            );
+        }
+    }
 }
