@@ -29,6 +29,13 @@
                  [routerLink]="'/horses/' + horse.id.toString() + '/edit'"
           />
         </td>
+        <td>
+          <input type="button"
+                 class="btn btn-outline-danger"
+                 value="Delete"
+                 (click)="deleteHorseById(horse.id)"
+          />
+        </td>
       </tr>
     </tbody>
   </table>

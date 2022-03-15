@@ -10,7 +10,7 @@ import {HorseService} from 'src/app/service/horse.service';
 export class HorseComponent implements OnInit {
   search = false;
   horses: Horse[];
-  error: string = null;
+  error?: string;
 
   constructor(
     private service: HorseService,
@@ -33,11 +33,24 @@ export class HorseComponent implements OnInit {
     });
   }
 
+  deleteHorseById(id: number): void {
+    this.service.deleteById(id).subscribe({
+      next: () => this.reloadHorses(),
+      error: err => {
+        this.showError(err.message);
+        this.reloadHorses();
+      }
+    });
+  }
+
   public vanishError(): void {
     this.error = null;
   }
 
   private showError(msg: string) {
     this.error = msg;
+    setTimeout(() => {
+      this.error = null;
+    }, 10000);
   }
 }
