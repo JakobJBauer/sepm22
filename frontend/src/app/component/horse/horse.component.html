@@ -1,3 +1,8 @@
+<div class="alert alert-danger" *ngIf="error">
+  Horse couldn't be deleted: <br>
+  {{error}}
+</div>
+
 <div class="flex-horizontal full-width mt-3">
   <button class="btn btn-light mr-1" (click)="reloadHorses()">&#x21bb;</button>
 </div>
