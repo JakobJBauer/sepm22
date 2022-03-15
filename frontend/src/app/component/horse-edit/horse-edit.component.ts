@@ -22,6 +22,19 @@ export class HorseEditComponent implements OnInit {
     private service: HorseService
   ) { }
 
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      this.service.getById(params.id).subscribe({
+        next: horse => {
+          this.horse = horse;
+        },
+        error: error => {
+          this.error = error.message;
+        }
+      });
+    });
+  }
+
   onSubmit(): void {
     this.service.update(this.horse, this.horse.id).subscribe({
       next: data => {

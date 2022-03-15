@@ -24,6 +24,10 @@ export class HorseService {
     return this.http.get<Horse[]>(baseUri);
   }
 
+  getById(id: number): Observable<Horse> {
+    return this.http.get<Horse>(baseUri + '/' + id.toString());
+  }
+
   update(horse: Horse, id: number): Observable<Horse> {
     return this.http.put<Horse>(baseUri + '/' + id.toString(), horse);
   }
