@@ -28,7 +28,7 @@ export class HorseComponent implements OnInit {
       },
       error: error => {
         console.error('Error fetching horses', error.message);
-        this.showError('Could not fetch horses: ' + error.message);
+        this.showError('Could not fetch horses:\n' + error.message);
       }
     });
   }
@@ -37,7 +37,7 @@ export class HorseComponent implements OnInit {
     this.service.deleteById(id).subscribe({
       next: () => this.reloadHorses(),
       error: err => {
-        this.showError(err.message);
+        this.showError('Could not delete horse\n' + err.message);
         this.reloadHorses();
       }
     });
