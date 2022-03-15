@@ -19,4 +19,6 @@ public interface HorseDao {
     Horse getHorseById(long id);
 
     Horse updateHorse(Horse horse);
+
+    void deleteHorseById(long id);
 }

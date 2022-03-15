@@ -20,6 +20,7 @@ public class HorseJdbcDao implements HorseDao {
     private static final String SQL_UPDATE_BY_ID = "UPDATE " + TABLE_NAME +
             " SET name = ?, description = ?, birthdate = ?, sex = ?, owner = ?" +
             " WHERE id = ?";
+    private static final String SQL_DELETE_BY_ID = "DELETE FROM " + TABLE_NAME + "  WHERE id = ?";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -72,6 +73,21 @@ public class HorseJdbcDao implements HorseDao {
             return horse;
         } catch (DataAccessException e) {
             throw new PersistenceException("Could not update Horse " + horse.getId(), e);
+        }
+    }
+
+    @Override
+    public void deleteHorseById(long id) {
+        try {
+            var deletedHorseId = jdbcTemplate.update(connection -> {
+               PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_BY_ID);
+               stmt.setLong(1, id);
+               return stmt;
+            });
+            if (deletedHorseId == 0)
+                throw new NoResultException("Could not delete Horse " + id);
+        } catch (DataAccessException e) {
+            throw new PersistenceException("Could not delete Horse " + id, e);
         }
     }
 
