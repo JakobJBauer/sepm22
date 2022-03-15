@@ -31,4 +31,8 @@ export class HorseService {
   update(horse: Horse, id: number): Observable<Horse> {
     return this.http.put<Horse>(baseUri + '/' + id.toString(), horse);
   }
+
+  deleteById(id: number): Observable<any> {
+    return this.http.delete(baseUri + '/' + id.toString());
+  }
 }
