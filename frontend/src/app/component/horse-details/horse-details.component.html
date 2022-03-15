@@ -1,0 +1,45 @@
+<h1>Horse Details</h1>
+<div *ngIf="horse" class="wrapper">
+  <div class="card mt-4">
+    <div class="card-body">
+      <h5 class="card-title">{{horse.name}}</h5>
+      <!--    <h6 class="card-subtitle mb-2 text-muted">belongs to {{horse.owner}}</h6>-->
+      <p class="card-text">{{horse.description}}</p>
+      <!--    <p class="card-text">{{horse.birthdate}} | {{horse.sex.toLowerCase()}}</p>-->
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Owner: {{horse.owner}}</li>
+      <li class="list-group-item">Birthdate: {{horse.birthdate}}</li>
+      <li class="list-group-item">Sex: {{horse.sex.toLowerCase()}}</li>
+    </ul>
+    <div class="card-body">
+      <a [routerLink]="" class="card-link">Father</a>
+      <a [routerLink]="" class="card-link">Mother</a>
+    </div>
+  </div>
+
+  <div class="d-grid mt-2">
+    <div class="row">
+      <div class="col-6">
+        <input type="button"
+               class="btn btn-outline-danger"
+               value="Delete"
+               [routerLink]=""
+        />
+      </div>
+
+      <div class="col-6">
+        <input type="button"
+               class="btn btn-outline-primary"
+               value="Edit"
+               [routerLink]="'/horses/' + horse.id.toString() + '/edit'"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-danger" *ngIf="error">
+    Horse couldn't be loaded <br>
+    {{error}}
+  </div>
+</div>

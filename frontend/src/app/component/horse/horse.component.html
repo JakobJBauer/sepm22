@@ -13,6 +13,13 @@
         <td>
           <input type="button"
                  class="btn btn-outline-primary"
+                 value="Details"
+                 [routerLink]="'/horses/' + horse.id.toString() + '/details'"
+          />
+        </td>
+        <td>
+          <input type="button"
+                 class="btn btn-outline-primary"
                  value="Edit"
                  [routerLink]="'/horses/' + horse.id.toString() + '/edit'"
           />

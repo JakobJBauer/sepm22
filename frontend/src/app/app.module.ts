@@ -9,6 +9,7 @@ import {FormsModule} from '@angular/forms';
 import {HorseComponent} from './component/horse/horse.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { HorseEditComponent } from './component/horse-edit/horse-edit.component';
+import { HorseDetailsComponent } from './component/horse-details/horse-details.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { HorseEditComponent } from './component/horse-edit/horse-edit.component'
     HeaderComponent,
     HorseComponent,
     HorseEditComponent,
+    HorseDetailsComponent,
   ],
   imports: [
     BrowserModule,
