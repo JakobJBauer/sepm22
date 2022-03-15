@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.persistence;
 
+import at.ac.tuwien.sepm.assignment.individual.dto.HorseDto;
 import at.ac.tuwien.sepm.assignment.individual.entity.Horse;
 
 import java.util.List;
@@ -14,6 +15,8 @@ public interface HorseDao {
      * @return a list of all stored horses
      */
     List<Horse> getAll();
+
+    Horse getHorseById(long id);
 
     Horse updateHorse(Horse horse);
 }
