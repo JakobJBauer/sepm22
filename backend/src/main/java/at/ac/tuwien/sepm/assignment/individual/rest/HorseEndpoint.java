@@ -27,6 +27,17 @@ public class HorseEndpoint {
                 .map(mapper::entityToDto);
     }
 
+    @GetMapping(path = "/{horseId}")
+    public HorseDto getHorseById(@PathVariable("horseId") long horseId) {
+        try {
+            return mapper.entityToDto(service.getHorseById(horseId));
+        } catch (NoResultException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "entity not found"
+            );
+        }
+    }
+
     @PutMapping(path = "/{horseId}")
     public HorseDto updateHorse(
             @RequestBody HorseDto horseDto,
