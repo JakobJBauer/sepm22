@@ -14,5 +14,7 @@ public interface HorseService {
      */
     List<Horse> allHorses();
 
+    Horse getHorseById(long id);
+
     Horse updateHorse(Horse horse);
 }
