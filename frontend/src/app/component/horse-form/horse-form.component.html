@@ -1,0 +1,32 @@
+<form class="d-grid">
+  <div class="row">
+    <div class="input-wrapper col-md-6 col-sm-12">
+      <label for="nameInp">Name:</label>
+      <input class="form-control" type="text" [(ngModel)]="horse.name" id="nameInp" name="nameInp">
+    </div>
+
+    <div class="input-wrapper col-md-6 col-sm-12">
+      <label for="descriptionInp">Description:</label>
+      <input class="form-control" type="text" [(ngModel)]="horse.description" id="descriptionInp" name="descriptionInp">
+    </div>
+
+    <div class="input-wrapper col-md-6 col-sm-12">
+      <label for="birthdateInp">Birthdate:</label>
+      <input class="form-control" type="date" [(ngModel)]="horse.birthdate" id="birthdateInp" name="birthdateInp">
+    </div>
+
+    <div class="input-wrapper col-md-6 col-sm-12">
+      <label for="sexInp">Sex:</label>
+      <select class="form-select" [(ngModel)]="horse.sex" id="sexInp" name="sexInp">
+        <option *ngFor="let sex of sexOptions" [value]="sex">{{sex.toLowerCase()}}</option>
+      </select>
+    </div>
+
+    <div class="input-wrapper col-md-6 col-sm-12">
+      <label for="ownerInp">Owner:</label>
+      <input class="form-control" type="text" [(ngModel)]="horse.owner" id="ownerInp" name="ownerInp">
+    </div>
+
+    <input class="btn btn-primary" type="submit" value="Submit" (click)="onSubmit()">
+  </div>
+</form>

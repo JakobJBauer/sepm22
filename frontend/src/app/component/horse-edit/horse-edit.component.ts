@@ -35,9 +35,9 @@ export class HorseEditComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
-    this.service.update(this.horse, this.horse.id).subscribe({
-      next: data => {
+  updateHorse(horse: Horse): void {
+    this.service.update(horse, horse.id).subscribe({
+      next: () => {
         this.savedSuccess = true;
         setTimeout(() => {
           this.savedSuccess = false;
