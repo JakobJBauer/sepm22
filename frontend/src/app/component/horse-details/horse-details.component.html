@@ -22,7 +22,7 @@
         <input type="button"
                class="btn btn-outline-danger"
                value="Delete"
-               [routerLink]=""
+               (click)="deleteHorseById(horse.id)"
         />
       </div>
 
@@ -35,9 +35,8 @@
       </div>
     </div>
   </div>
+</div>
 
-  <div class="alert alert-danger" *ngIf="error">
-    Horse couldn't be loaded <br>
-    {{error}}
-  </div>
+<div class="alert alert-danger" *ngIf="error">
+  {{error}}
 </div>
