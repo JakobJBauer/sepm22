@@ -5,5 +5,7 @@ Jakob Johannes Bauer
 09.03.2022 1h Read Assignment
 13.03.2022 3h Environment and Database fix
 13.03.2022 3h US 1
+14.03.2022 4h US 2
+14.03.2022 3h US 6
 
-Total work time: 8h
+Total work time: 15h
