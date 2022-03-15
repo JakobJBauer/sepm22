@@ -38,6 +38,17 @@ public class HorseEndpoint {
         }
     }
 
+    @PostMapping(path = "/create")
+    public HorseDto createHorse(@RequestBody HorseDto horseDto) {
+        return mapper.entityToDto(
+                service.createHorse(
+                        mapper.dtoToEntity(
+                                horseDto
+                        )
+                )
+        );
+    }
+
     @PutMapping(path = "/{horseId}")
     public HorseDto updateHorse(
             @RequestBody HorseDto horseDto,

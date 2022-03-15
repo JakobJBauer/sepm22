@@ -28,4 +28,14 @@ public class HorseMapper {
                 horseDto.owner()
         );
     }
+
+    public Horse dtoToEntity(HorseDto horseDto) {
+        return new Horse(
+                horseDto.name(),
+                horseDto.description(),
+                horseDto.birthdate(),
+                horseDto.sex(),
+                horseDto.owner()
+        );
+    }
 }
