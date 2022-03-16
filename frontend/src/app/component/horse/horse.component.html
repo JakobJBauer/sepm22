@@ -8,36 +8,44 @@
 </div>
 
 <div class="mt-3">
-  <table class="table table-hover">
+  <table class="table table-hover table-sm">
     <thead>
-      <th>Name</th>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Birthdate</th>
+    <th>Sex</th>
+    <th>Owner</th>
     </thead>
     <tbody>
-      <tr *ngIf="horses && !horses.length"><td>No horses to display</td></tr>
-      <tr *ngFor="let horse of horses">
-        <td>{{horse.name}}</td>
-        <td>
+    <tr *ngIf="horses && !horses.length">
+      <td>No horses to display</td>
+    </tr>
+    <tr *ngFor="let horse of horses">
+      <td>{{horse.name}}</td>
+      <td>{{horse.description}}</td>
+      <td>{{horse.birthdate}}</td>
+      <td>{{horse.sex.toLowerCase()}}</td>
+      <td>{{horse.owner}}</td>
+      <td>
+        <div class="float-end">
           <input type="button"
-                 class="btn btn-outline-primary"
+                 class="btn btn-sm btn-outline-primary me-1"
                  value="Details"
                  [routerLink]="'/horses/' + horse.id.toString() + '/details'"
           />
-        </td>
-        <td>
           <input type="button"
-                 class="btn btn-outline-primary"
+                 class="btn btn-sm btn-outline-primary me-1"
                  value="Edit"
                  [routerLink]="'/horses/' + horse.id.toString() + '/edit'"
           />
-        </td>
-        <td>
           <input type="button"
-                 class="btn btn-outline-danger"
+                 class="btn btn-sm btn-outline-danger"
                  value="Delete"
                  (click)="deleteHorseById(horse.id)"
           />
-        </td>
-      </tr>
+        </div>
+      </td>
+    </tr>
     </tbody>
   </table>
 </div>
