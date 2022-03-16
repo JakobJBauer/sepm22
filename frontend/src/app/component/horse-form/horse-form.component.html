@@ -1,32 +1,35 @@
-<form class="d-grid">
+<form #horseForm="ngForm" (ngSubmit)="onSubmit(); horseForm.reset()" class="d-grid">
   <div class="row">
     <div class="input-wrapper col-md-6 col-sm-12">
       <label for="nameInp">Name:</label>
-      <input class="form-control" type="text" [(ngModel)]="horse.name" id="nameInp" name="nameInp">
+      <input class="form-control" type="text" [(ngModel)]="horse.name" id="nameInp" name="name" #name="ngModel" required>
+      <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
+        Name is required
+      </div>
     </div>
 
     <div class="input-wrapper col-md-6 col-sm-12">
       <label for="descriptionInp">Description:</label>
-      <input class="form-control" type="text" [(ngModel)]="horse.description" id="descriptionInp" name="descriptionInp">
+      <input class="form-control" type="text" [(ngModel)]="horse.description" id="descriptionInp" name="description">
     </div>
 
     <div class="input-wrapper col-md-6 col-sm-12">
       <label for="birthdateInp">Birthdate:</label>
-      <input class="form-control" type="date" [(ngModel)]="horse.birthdate" id="birthdateInp" name="birthdateInp">
+      <input class="form-control" type="date" [(ngModel)]="horse.birthdate" id="birthdateInp" name="birthdate" required>
     </div>
 
     <div class="input-wrapper col-md-6 col-sm-12">
       <label for="sexInp">Sex:</label>
-      <select class="form-select" [(ngModel)]="horse.sex" id="sexInp" name="sexInp">
+      <select class="form-select" [(ngModel)]="horse.sex" id="sexInp" name="sex" required>
         <option *ngFor="let sex of sexOptions" [value]="sex">{{sex.toLowerCase()}}</option>
       </select>
     </div>
 
     <div class="input-wrapper col-md-6 col-sm-12">
       <label for="ownerInp">Owner:</label>
-      <input class="form-control" type="text" [(ngModel)]="horse.owner" id="ownerInp" name="ownerInp">
+      <input class="form-control" type="text" [(ngModel)]="horse.owner" id="ownerInp" name="owner">
     </div>
 
-    <input class="btn btn-primary" type="submit" value="Submit" (click)="onSubmit()">
+    <input class="btn btn-primary" type="submit" value="Submit" [disabled]="!horseForm.form.valid || horseForm.pristine">
   </div>
 </form>
