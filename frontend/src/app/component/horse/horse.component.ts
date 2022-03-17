@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Horse} from '../../dto/horse';
 import {HorseService} from 'src/app/service/horse.service';
+import {sexOptions} from "../../types/sex";
+import {SearchParams} from "../../dto/searchParams";
 
 @Component({
   selector: 'app-horse',
@@ -12,16 +14,26 @@ export class HorseComponent implements OnInit {
   horses: Horse[];
   error?: string;
 
+  sexOptions = sexOptions;
+
+  searchParams: SearchParams;
+
   constructor(
     private service: HorseService,
   ) { }
 
   ngOnInit(): void {
     this.reloadHorses();
+    this.searchParams = {} as SearchParams;
   }
 
   reloadHorses() {
-    this.service.getAll().subscribe({
+    this.resetForm();
+    this.loadFilteredHorses();
+  }
+
+  loadFilteredHorses() {
+    this.service.getAll(this.searchParams).subscribe({
       next: data => {
         console.log('received horses', data);
         this.horses = data;
@@ -35,12 +47,16 @@ export class HorseComponent implements OnInit {
 
   deleteHorseById(id: number): void {
     this.service.deleteById(id).subscribe({
-      next: () => this.reloadHorses(),
+      next: () => this.loadFilteredHorses(),
       error: err => {
         this.showError('Could not delete horse\n' + err.message);
-        this.reloadHorses();
+        this.loadFilteredHorses();
       }
     });
+  }
+
+  resetForm() {
+    this.searchParams = {};
   }
 
   public vanishError(): void {
