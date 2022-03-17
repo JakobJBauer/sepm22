@@ -1,5 +1,5 @@
 <h1>Add new Horse</h1>
-<app-horse-form [horse]="horse" (submitted)="createHorse($event)"></app-horse-form>
+<app-horse-form [horse]="horse" (submitted)="createHorse($event)" [reset]="true"></app-horse-form>
 <div class="alert alert-success" *ngIf="savedSuccess">Horse added!</div>
 <div class="alert alert-danger" *ngIf="error">
   Horse couldn't be created <br>
