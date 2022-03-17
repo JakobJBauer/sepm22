@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.assignment.individual.service.impl;
 
 import at.ac.tuwien.sepm.assignment.individual.entity.Horse;
+import at.ac.tuwien.sepm.assignment.individual.entity.SearchParams;
 import at.ac.tuwien.sepm.assignment.individual.persistence.HorseDao;
 import at.ac.tuwien.sepm.assignment.individual.service.HorseService;
 import org.springframework.stereotype.Service;
@@ -16,8 +17,8 @@ public class HorseServiceImpl implements HorseService {
     }
 
     @Override
-    public List<Horse> allHorses() {
-        return dao.getAll();
+    public List<Horse> allHorses(SearchParams searchParams) {
+        return dao.getAll(searchParams);
     }
 
     @Override
