@@ -1,8 +1,9 @@
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {Horse} from '../dto/horse';
+import {SearchParams} from "../dto/searchParams";
 
 const baseUri = environment.backendUrl + '/horses';
 
@@ -20,8 +21,8 @@ export class HorseService {
    *
    * @return observable list of found horses.
    */
-  getAll(): Observable<Horse[]> {
-    return this.http.get<Horse[]>(baseUri);
+  getAll(searchParams: SearchParams): Observable<Horse[]> {
+    return this.http.get<Horse[]>(baseUri, {params: searchParams as HttpParams});
   }
 
   getById(id: number): Observable<Horse> {
