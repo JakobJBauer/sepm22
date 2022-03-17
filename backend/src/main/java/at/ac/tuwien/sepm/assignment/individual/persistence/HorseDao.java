@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.assignment.individual.persistence;
 
 import at.ac.tuwien.sepm.assignment.individual.dto.HorseDto;
 import at.ac.tuwien.sepm.assignment.individual.entity.Horse;
+import at.ac.tuwien.sepm.assignment.individual.entity.SearchParams;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface HorseDao {
      * Get all horses stored in the persistent data store.
      * @return a list of all stored horses
      */
-    List<Horse> getAll();
+    List<Horse> getAll(SearchParams searchParams);
 
     Horse getHorseById(long id);
 

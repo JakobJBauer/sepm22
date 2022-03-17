@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.assignment.individual.persistence.impl;
 
 import at.ac.tuwien.sepm.assignment.individual.entity.Horse;
+import at.ac.tuwien.sepm.assignment.individual.entity.SearchParams;
 import at.ac.tuwien.sepm.assignment.individual.entity.Sex;
 import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
 import at.ac.tuwien.sepm.assignment.individual.exception.PersistenceException;
@@ -12,12 +13,14 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Repository
 public class HorseJdbcDao implements HorseDao {
     private static final String TABLE_NAME = "horse";
-    private static final String SQL_SELECT_ALL = "SELECT * FROM " + TABLE_NAME;
+    private static final String SQL_SELECT_ALL = "SELECT * FROM " + TABLE_NAME + " WHERE true";
     private static final String SQL_SELECT_ONE = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
     private static final String SQL_CREATE = "INSERT INTO " + TABLE_NAME +
             " (name, description, birthdate, sex, owner)" +
@@ -34,9 +37,37 @@ public class HorseJdbcDao implements HorseDao {
     }
 
     @Override
-    public List<Horse> getAll() {
+    public List<Horse> getAll(SearchParams searchParams) {
+        String sqlRequest = SQL_SELECT_ALL;
+        ArrayList<Object> sqlParams = new ArrayList<>();
+
+        if (searchParams.getName() != null) {
+            sqlRequest += " AND LOWER(name) LIKE CONCAT('%', ?, '%')";
+            sqlParams.add(searchParams.getName().toLowerCase());
+        }
+        if (searchParams.getDescription() != null) {
+            sqlRequest += " AND LOWER(description) LIKE CONCAT('%', ?, '%')";
+            sqlParams.add(searchParams.getDescription().toLowerCase());
+        }
+        if (searchParams.getBirthdate() != null) {
+            sqlRequest += " AND birthdate <= ?";
+            sqlParams.add(searchParams.getBirthdate());
+        }
+        if (searchParams.getSex() != null) {
+            sqlRequest += " AND sex = ?";
+            sqlParams.add(searchParams.getSex().toString());
+        }
+        if (searchParams.getOwnerName() != null) {
+            sqlRequest += " AND LOWER(owner) LIKE CONCAT('%', ?, '%')";
+            sqlParams.add(searchParams.getOwnerName().toLowerCase());
+        }
+
         try {
-            return jdbcTemplate.query(SQL_SELECT_ALL, this::mapRow);
+            return jdbcTemplate.query(
+                    sqlRequest,
+                    this::mapRow,
+                    sqlParams.toArray()
+                    );
         } catch (DataAccessException e) {
             throw new PersistenceException("Could not query all horses", e);
         }
