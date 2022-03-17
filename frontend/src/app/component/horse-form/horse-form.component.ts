@@ -10,6 +10,7 @@ import {sexOptions} from '../../types/sex';
 export class HorseFormComponent {
 
   @Input() horse: Horse;
+  @Input() reset = false;
   @Output() submitted = new EventEmitter<Horse>();
 
   sexOptions = sexOptions;
