@@ -19,4 +19,8 @@ export class OwnerService {
     return this.http.post<Owner>(baseUri, owner);
   }
 
+  getAll(): Observable<Owner[]> {
+    return this.http.get<Owner[]>(baseUri);
+  }
+
 }
