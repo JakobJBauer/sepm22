@@ -30,7 +30,7 @@ export class HorseService {
   }
 
   create(horse: Horse): Observable<Horse> {
-    return this.http.post<Horse>(baseUri + '/create', horse);
+    return this.http.post<Horse>(baseUri, horse);
   }
 
   update(horse: Horse, id: number): Observable<Horse> {
