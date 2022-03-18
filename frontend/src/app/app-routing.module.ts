@@ -13,6 +13,7 @@ const routes: Routes = [
   {path: 'horses/create', component: HorseCreateComponent},
   {path: 'horses/:id/edit', component: HorseEditComponent},
   {path: 'horses/:id/details', component: HorseDetailsComponent},
+  {path: 'owners', component: OwnerComponent},
   {path: 'owners/create', component: OwnerCreateComponent},
   {path: '**', redirectTo: 'horses'},
 ];
