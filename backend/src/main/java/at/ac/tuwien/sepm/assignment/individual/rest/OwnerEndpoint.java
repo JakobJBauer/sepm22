@@ -16,19 +16,17 @@ public class OwnerEndpoint {
     private final OwnerMapper mapper;
     private final OwnerSearchParamsMapper searchParamsMapper;
 
-    public OwnerEndpoint(OwnerService service, OwnerMapper mapper, OwnerSearchParamsMapper ownerSearchParamsMapper) {
+    public OwnerEndpoint(OwnerService service, OwnerMapper mapper, OwnerSearchParamsMapper searchParamsMapper) {
         this.service = service;
         this.mapper = mapper;
-        this.searchParamsMapper = ownerSearchParamsMapper;
+        this.searchParamsMapper = searchParamsMapper;
     }
 
     @GetMapping
-    public Stream<OwnerDto> getAllOwners(OwnerSeachParamsDto ownerSeachParamsDto) {
+    public Stream<OwnerDto> getAllOwners(OwnerSeachParamsDto searchParamsDto) {
         return service.getAllOwners(
-            this.searchParamsMapper.dtoToEntity(ownerSeachParamsDto)
+            this.searchParamsMapper.dtoToEntity(searchParamsDto)
         ).stream().map(mapper::entityToDto);
-    }
-
     }
 
     @PostMapping
