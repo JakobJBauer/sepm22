@@ -1,0 +1,38 @@
+<h1>Add new Owner</h1>
+
+<form #ownerForm="ngForm" (ngSubmit)="createOwner(); ownerForm.reset()" class="d-grid">
+  <div class="row">
+    <div class="input-wrapper col-md-6 col-sm-12">
+      <label for="firstName">First Name:</label>
+      <input class="form-control" type="text" [(ngModel)]="owner.firstName" id="firstName" name="firstName" #firstName="ngModel" required>
+      <div [hidden]="firstName.valid || firstName.pristine" class="alert alert-danger">
+        First Name is required
+      </div>
+    </div>
+
+    <div class="input-wrapper col-md-6 col-sm-12">
+      <label for="lastName">Last Name:</label>
+      <input class="form-control" type="text" [(ngModel)]="owner.lastName" id="lastName" name="lastName" #lastName="ngModel" required>
+      <div [hidden]="lastName.valid || lastName.pristine" class="alert alert-danger">
+        Last Name is required
+      </div>
+    </div>
+
+    <div class="input-wrapper col-md-6 col-sm-12">
+      <label for="email">Email:</label>
+      <input class="form-control" type="email" [(ngModel)]="owner.email" id="email" name="email" #email="ngModel" ngModel email="true">
+      <div [hidden]="email.valid || email.pristine" class="alert alert-danger">
+        Email must have correct format
+      </div>
+    </div>
+
+    <input class="btn btn-primary" type="submit" value="Submit" [disabled]="!ownerForm.form.valid || ownerForm.pristine">
+  </div>
+</form>
+
+
+<div class="alert alert-success" *ngIf="savedSuccess">Owner added!</div>
+<div class="alert alert-danger" *ngIf="error">
+  Owner couldn't be created <br>
+  {{error}}
+</div>
