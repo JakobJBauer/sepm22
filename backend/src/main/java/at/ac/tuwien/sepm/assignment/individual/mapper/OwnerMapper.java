@@ -6,6 +6,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OwnerMapper {
+    public Owner dtoToEntity(OwnerDto ownerDto) {
+        return new Owner(
+                ownerDto.firstName(),
+                ownerDto.lastName(),
+                ownerDto.email()
+        );
+    }
+
     public OwnerDto entityToDto(Owner owner) {
         return new OwnerDto(
                 owner.getId(),

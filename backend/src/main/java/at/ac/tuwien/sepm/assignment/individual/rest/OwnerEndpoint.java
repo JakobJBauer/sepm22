@@ -1,19 +1,34 @@
 package at.ac.tuwien.sepm.assignment.individual.rest;
 
 import at.ac.tuwien.sepm.assignment.individual.dto.OwnerDto;
+import at.ac.tuwien.sepm.assignment.individual.dto.OwnerSeachParamsDto;
 import at.ac.tuwien.sepm.assignment.individual.mapper.OwnerMapper;
+import at.ac.tuwien.sepm.assignment.individual.mapper.OwnerSearchParamsMapper;
 import at.ac.tuwien.sepm.assignment.individual.service.OwnerService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping(path = "/owners")
 public class OwnerEndpoint {
     private final OwnerService service;
     private final OwnerMapper mapper;
+    private final OwnerSearchParamsMapper searchParamsMapper;
+
     public OwnerEndpoint(OwnerService service, OwnerMapper mapper, OwnerSearchParamsMapper ownerSearchParamsMapper) {
         this.service = service;
         this.mapper = mapper;
+        this.searchParamsMapper = ownerSearchParamsMapper;
+    }
+
+    @GetMapping
+    public Stream<OwnerDto> getAllOwners(OwnerSeachParamsDto ownerSeachParamsDto) {
+        return service.getAllOwners(
+            this.searchParamsMapper.dtoToEntity(ownerSeachParamsDto)
+        ).stream().map(mapper::entityToDto);
+    }
+
     }
 
     @PostMapping
