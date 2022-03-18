@@ -7,3 +7,11 @@ CREATE TABLE IF NOT EXISTS horse
   sex           ENUM ('MALE', 'FEMALE') NOT NULL,
   owner         VARCHAR(255)
 );
+
+CREATE TABLE IF NOT EXISTS owner
+(
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    firstName   VARCHAR(255) NOT NULL,
+    lastName    VARCHAR(255) NOT NULL,
+    email       VARCHAR(255)
+);

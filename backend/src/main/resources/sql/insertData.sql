@@ -8,3 +8,6 @@ INSERT INTO horse (name, description, birthdate, sex, owner)
 VALUES ('Ramzan', 'Horsus Chonkus', CURRENT_DATE, 'MALE', 'Ashish Negi'),
        ('Ash', 'Minorus Taurus', '2020-09-20', 'MALE', 'Ashish Negis Mom')
 ;
+
+INSERT INTO owner (firstName, lastName, email)
+VALUES ('Jack', 'Jackson', 'jack@jackson.com');
