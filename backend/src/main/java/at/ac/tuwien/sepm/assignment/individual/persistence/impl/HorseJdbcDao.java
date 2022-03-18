@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepm.assignment.individual.persistence.impl;
 
 import at.ac.tuwien.sepm.assignment.individual.entity.Horse;
-import at.ac.tuwien.sepm.assignment.individual.entity.SearchParams;
+import at.ac.tuwien.sepm.assignment.individual.entity.HorseSearchParams;
 import at.ac.tuwien.sepm.assignment.individual.entity.Sex;
 import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
 import at.ac.tuwien.sepm.assignment.individual.exception.PersistenceException;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @Repository
 public class HorseJdbcDao implements HorseDao {
@@ -37,29 +36,29 @@ public class HorseJdbcDao implements HorseDao {
     }
 
     @Override
-    public List<Horse> getAll(SearchParams searchParams) {
+    public List<Horse> getAll(HorseSearchParams horseSearchParams) {
         String sqlRequest = SQL_SELECT_ALL;
         ArrayList<Object> sqlParams = new ArrayList<>();
 
-        if (searchParams.getName() != null) {
+        if (horseSearchParams.getName() != null) {
             sqlRequest += " AND LOWER(name) LIKE CONCAT('%', ?, '%')";
-            sqlParams.add(searchParams.getName().toLowerCase());
+            sqlParams.add(horseSearchParams.getName().toLowerCase());
         }
-        if (searchParams.getDescription() != null) {
+        if (horseSearchParams.getDescription() != null) {
             sqlRequest += " AND LOWER(description) LIKE CONCAT('%', ?, '%')";
-            sqlParams.add(searchParams.getDescription().toLowerCase());
+            sqlParams.add(horseSearchParams.getDescription().toLowerCase());
         }
-        if (searchParams.getBirthdate() != null) {
+        if (horseSearchParams.getBirthdate() != null) {
             sqlRequest += " AND birthdate <= ?";
-            sqlParams.add(searchParams.getBirthdate());
+            sqlParams.add(horseSearchParams.getBirthdate());
         }
-        if (searchParams.getSex() != null) {
+        if (horseSearchParams.getSex() != null) {
             sqlRequest += " AND sex = ?";
-            sqlParams.add(searchParams.getSex().toString());
+            sqlParams.add(horseSearchParams.getSex().toString());
         }
-        if (searchParams.getOwnerName() != null) {
+        if (horseSearchParams.getOwnerName() != null) {
             sqlRequest += " AND LOWER(owner) LIKE CONCAT('%', ?, '%')";
-            sqlParams.add(searchParams.getOwnerName().toLowerCase());
+            sqlParams.add(horseSearchParams.getOwnerName().toLowerCase());
         }
 
         try {

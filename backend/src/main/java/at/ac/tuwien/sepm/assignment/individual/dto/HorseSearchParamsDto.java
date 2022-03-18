@@ -5,7 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
-public record SearchParamsDto(
+public record HorseSearchParamsDto(
         String name,
         String description,
         @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate birthdate,

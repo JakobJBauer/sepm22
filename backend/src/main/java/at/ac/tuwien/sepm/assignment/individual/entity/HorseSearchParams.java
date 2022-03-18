@@ -1,20 +1,17 @@
 package at.ac.tuwien.sepm.assignment.individual.entity;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.Locale;
 
-public class SearchParams {
+public class HorseSearchParams {
     private String name;
     private String description;
     private LocalDate birthdate;
     private Sex sex;
     private String ownerName;
 
-    public SearchParams() { }
+    public HorseSearchParams() { }
 
-    public SearchParams(String name, String description, LocalDate birthdate, Sex sex, String ownerName) {
+    public HorseSearchParams(String name, String description, LocalDate birthdate, Sex sex, String ownerName) {
         this.name = name;
         this.description = description;
         this.birthdate = birthdate;

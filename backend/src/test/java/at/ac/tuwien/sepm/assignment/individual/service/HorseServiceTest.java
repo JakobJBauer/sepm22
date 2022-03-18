@@ -3,7 +3,7 @@ package at.ac.tuwien.sepm.assignment.individual.service;
 import at.ac.tuwien.sepm.assignment.individual.entity.Horse;
 import java.util.List;
 
-import at.ac.tuwien.sepm.assignment.individual.entity.SearchParams;
+import at.ac.tuwien.sepm.assignment.individual.entity.HorseSearchParams;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +20,7 @@ public class HorseServiceTest {
 
   @Test
   public void getAllReturnsAllStoredHorses() {
-    List<Horse> horses = horseService.allHorses(new SearchParams());
+    List<Horse> horses = horseService.allHorses(new HorseSearchParams());
     assertThat(horses.size()).isEqualTo(1);
     assertThat(horses.get(0).getId()).isEqualTo(-1);
     assertThat(horses.get(0).getName()).isEqualTo("Wendy");

@@ -1,12 +1,11 @@
 package at.ac.tuwien.sepm.assignment.individual.rest;
 
-import at.ac.tuwien.sepm.assignment.individual.dto.SearchParamsDto;
+import at.ac.tuwien.sepm.assignment.individual.dto.HorseSearchParamsDto;
 import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
 import at.ac.tuwien.sepm.assignment.individual.mapper.HorseMapper;
 import at.ac.tuwien.sepm.assignment.individual.dto.HorseDto;
-import at.ac.tuwien.sepm.assignment.individual.mapper.SearchParamsMapper;
+import at.ac.tuwien.sepm.assignment.individual.mapper.HorseSearchParamsMapper;
 import at.ac.tuwien.sepm.assignment.individual.service.HorseService;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,17 +17,17 @@ import java.util.stream.Stream;
 public class HorseEndpoint {
     private final HorseService service;
     private final HorseMapper mapper;
-    private final SearchParamsMapper searchMapper;
+    private final HorseSearchParamsMapper searchMapper;
 
-    public HorseEndpoint(HorseService service, HorseMapper mapper, SearchParamsMapper searchMapper) {
+    public HorseEndpoint(HorseService service, HorseMapper mapper, HorseSearchParamsMapper searchMapper) {
         this.service = service;
         this.mapper = mapper;
         this.searchMapper = searchMapper;
     }
 
     @GetMapping
-    public Stream<HorseDto> allHorses(SearchParamsDto searchParamsDto) {
-        return service.allHorses(searchMapper.dtoToEntity(searchParamsDto)).stream()
+    public Stream<HorseDto> allHorses(HorseSearchParamsDto horseSearchParamsDto) {
+        return service.allHorses(searchMapper.dtoToEntity(horseSearchParamsDto)).stream()
                 .map(mapper::entityToDto);
     }
 
