@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Horse} from '../../dto/horse';
 import {HorseService} from 'src/app/service/horse.service';
 import {sexOptions} from "../../types/sex";
-import {SearchParams} from "../../dto/searchParams";
+import {HorseSearchParams} from "../../dto/horseSearchParams";
 
 @Component({
   selector: 'app-horse',
@@ -16,7 +16,7 @@ export class HorseComponent implements OnInit {
 
   sexOptions = sexOptions;
 
-  searchParams: SearchParams;
+  searchParams: HorseSearchParams;
 
   constructor(
     private service: HorseService,
@@ -24,7 +24,7 @@ export class HorseComponent implements OnInit {
 
   ngOnInit(): void {
     this.reloadHorses();
-    this.searchParams = {} as SearchParams;
+    this.searchParams = {} as HorseSearchParams;
   }
 
   reloadHorses() {

@@ -1,6 +1,6 @@
 import {Sex} from '../types/sex';
 
-export interface SearchParams {
+export interface HorseSearchParams {
   name?: string;
   description?: string;
   birthdate?: Date;
