@@ -1,9 +1,11 @@
 package at.ac.tuwien.sepm.assignment.individual.rest;
 
+import at.ac.tuwien.sepm.assignment.individual.dto.BasicHorseInputDto;
+import at.ac.tuwien.sepm.assignment.individual.dto.FullHorseOutputDto;
 import at.ac.tuwien.sepm.assignment.individual.dto.HorseSearchParamsDto;
 import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
 import at.ac.tuwien.sepm.assignment.individual.mapper.HorseMapper;
-import at.ac.tuwien.sepm.assignment.individual.dto.HorseDto;
+import at.ac.tuwien.sepm.assignment.individual.dto.BasicHorseOutputDto;
 import at.ac.tuwien.sepm.assignment.individual.mapper.HorseSearchParamsMapper;
 import at.ac.tuwien.sepm.assignment.individual.service.HorseService;
 import org.springframework.http.HttpStatus;
@@ -26,15 +28,15 @@ public class HorseEndpoint {
     }
 
     @GetMapping
-    public Stream<HorseDto> allHorses(HorseSearchParamsDto horseSearchParamsDto) {
+    public Stream<BasicHorseOutputDto> allHorses(HorseSearchParamsDto horseSearchParamsDto) {
         return service.allHorses(searchMapper.dtoToEntity(horseSearchParamsDto)).stream()
-                .map(mapper::entityToDto);
+                .map(mapper::entityToBasicDto);
     }
 
     @GetMapping(path = "/{horseId}")
-    public HorseDto getHorseById(@PathVariable("horseId") long horseId) {
+    public FullHorseOutputDto getHorseById(@PathVariable("horseId") long horseId) {
         try {
-            return mapper.entityToDto(service.getHorseById(horseId));
+            return mapper.entityToFullDto(service.getHorseById(horseId));
         } catch (NoResultException e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "entity not found"
@@ -43,26 +45,26 @@ public class HorseEndpoint {
     }
 
     @PostMapping
-    public HorseDto createHorse(@RequestBody HorseDto horseDto) {
-        return mapper.entityToDto(
+    public BasicHorseOutputDto createHorse(@RequestBody BasicHorseInputDto basicHorseInputDto) {
+        return mapper.entityToBasicDto(
                 service.createHorse(
                         mapper.dtoToEntity(
-                                horseDto
+                                basicHorseInputDto
                         )
                 )
         );
     }
 
     @PutMapping(path = "/{horseId}")
-    public HorseDto updateHorse(
-            @RequestBody HorseDto horseDto,
+    public FullHorseOutputDto updateHorse(
+            @RequestBody BasicHorseInputDto basicHorseInputDto,
             @PathVariable("horseId") long horseId
     ) {
         try {
-            return mapper.entityToDto(
+            return mapper.entityToFullDto(
                     service.updateHorse(
                             mapper.dtoToEntity(
-                                    horseDto,
+                                    basicHorseInputDto,
                                     horseId
                             )
                     )

@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.rest;
 
-import at.ac.tuwien.sepm.assignment.individual.dto.OwnerDto;
+import at.ac.tuwien.sepm.assignment.individual.dto.FullOwnerDto;
 import at.ac.tuwien.sepm.assignment.individual.dto.OwnerSearchParamsDto;
 import at.ac.tuwien.sepm.assignment.individual.mapper.OwnerMapper;
 import at.ac.tuwien.sepm.assignment.individual.mapper.OwnerSearchParamsMapper;
@@ -23,18 +23,18 @@ public class OwnerEndpoint {
     }
 
     @GetMapping
-    public Stream<OwnerDto> getAllOwners(OwnerSearchParamsDto searchParamsDto) {
+    public Stream<FullOwnerDto> getAllOwners(OwnerSearchParamsDto searchParamsDto) {
         return service.getAllOwners(
             this.searchParamsMapper.dtoToEntity(searchParamsDto)
-        ).stream().map(mapper::entityToDto);
+        ).stream().map(mapper::entityToFullDto);
     }
 
     @PostMapping
-    public OwnerDto createOwner(@RequestBody OwnerDto ownerDto) {
-        return mapper.entityToDto(
+    public FullOwnerDto createOwner(@RequestBody FullOwnerDto fullOwnerDto) {
+        return mapper.entityToFullDto(
                 service.createOwner(
                         mapper.dtoToEntity(
-                                ownerDto
+                                fullOwnerDto
                         )
                 )
         );
