@@ -4,10 +4,10 @@
 
 DELETE FROM horse where id < 0;
 
-INSERT INTO horse (name, description, birthdate, sex, owner)
-VALUES ('Ramzan', 'Horsus Chonkus', CURRENT_DATE, 'MALE', 'Ashish Negi'),
-       ('Ash', 'Minorus Taurus', '2020-09-20', 'MALE', 'Ashish Negis Mom')
-;
-
 INSERT INTO owner (firstName, lastName, email)
 VALUES ('Jack', 'Jackson', 'jack@jackson.com');
+
+INSERT INTO horse (name, description, birthdate, sex, ownerId)
+VALUES ('Ramzan', 'Horsus Chonkus', CURRENT_DATE, 'MALE', 1),
+       ('Ash', 'Minorus Taurus', '2020-09-20', 'MALE', 1)
+;
