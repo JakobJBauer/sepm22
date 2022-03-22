@@ -27,7 +27,16 @@
 
     <div class="input-wrapper col-md-6 col-sm-12">
       <label for="ownerInp">Owner:</label>
-      <input class="form-control" type="text" [(ngModel)]="horse.owner" id="ownerInp" name="owner">
+      <input
+        [ngbTypeahead]="search"
+        class="form-control"
+        type="text"
+        [(ngModel)]="horse.owner"
+        id="ownerInp"
+        name="owner"
+        [resultFormatter]="ownerNameFormatter"
+        [inputFormatter]="ownerNameFormatter"
+      >
     </div>
 
     <input class="btn btn-primary" type="submit" value="Submit" [disabled]="!horseForm.form.valid || horseForm.pristine">
