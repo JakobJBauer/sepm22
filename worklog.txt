@@ -11,5 +11,8 @@ Jakob Johannes Bauer
 15.03.2022 1h US 6
 15.03.2022 3h US 1
 16.03.2022 5h US 7
+20.03.2022 5h US 8
+21.03.2022 2h US 9
+22.03.2022 2h US 8
 
-Total work time: 27h
+Total work time: 36h
