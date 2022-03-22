@@ -9,4 +9,6 @@ public interface OwnerDao {
     List<Owner> getAllOwners(OwnerSearchParams ownerSearchParams);
 
     Owner createOwner(Owner owner);
+
+    Owner getOwnerById(Long id);
 }

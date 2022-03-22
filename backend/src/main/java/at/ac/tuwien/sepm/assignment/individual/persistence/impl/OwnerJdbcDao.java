@@ -24,6 +24,7 @@ public class OwnerJdbcDao implements OwnerDao {
     private JdbcTemplate jdbcTemplate;
 
     private static final String TABLE = "owner";
+    private static final String SQL_SELECT_ONE = "SELECT * FROM " + TABLE + " WHERE id = ?";
     private static final String SQL_GET_ALL = "SELECT * FROM " + TABLE;
     private static final String SQL_CREATE = "INSERT INTO " + TABLE +
             " (firstName, lastName, email) VALUES (?, ?, ?);";
@@ -79,6 +80,20 @@ public class OwnerJdbcDao implements OwnerDao {
             return owner;
         } catch (DataAccessException e) {
             throw new PersistenceException("Could not create a new Owner ", e);
+        }
+    }
+
+    @Override
+    public Owner getOwnerById(Long id) {
+        try {
+            var owners = jdbcTemplate.query(SQL_SELECT_ONE, this::mapRow, id);
+
+            if (owners.isEmpty())
+                throw new NoResultException("Could not find owner with id " + id);
+
+            return owners.get(0);
+        } catch (DataAccessException e) {
+            throw new PersistenceException("Could not read owner " + id, e);
         }
     }
 

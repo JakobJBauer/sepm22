@@ -22,6 +22,11 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
+    public Owner getOwnerById(Long id) {
+        return dao.getOwnerById(id);
+    }
+
+    @Override
     public Owner createOwner(Owner owner) {
         return dao.createOwner(owner);
     }

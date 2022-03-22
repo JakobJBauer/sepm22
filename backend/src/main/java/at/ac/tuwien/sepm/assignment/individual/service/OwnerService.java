@@ -8,6 +8,7 @@ import java.util.List;
 public interface OwnerService {
     List<Owner> getAllOwners(OwnerSearchParams ownerSearchParams);
 
+    Owner getOwnerById(Long id);
 
     Owner createOwner(Owner owner);
 }
