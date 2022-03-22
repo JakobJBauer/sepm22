@@ -8,11 +8,11 @@ public class Horse {
     private String description;
     private LocalDate birthdate;
     private Sex sex;
-    private String owner;
+    private Owner owner;
 
     public Horse() {}
 
-    public Horse(String name, String description, LocalDate birthdate, Sex sex, String owner) {
+    public Horse(String name, String description, LocalDate birthdate, Sex sex, Owner owner) {
         this.name =name;
         this.description = description;
         this.birthdate = birthdate;
@@ -20,7 +20,7 @@ public class Horse {
         this.owner = owner;
     }
 
-    public Horse(Long id, String name, String description, LocalDate birthdate, Sex sex, String owner) {
+    public Horse(Long id, String name, String description, LocalDate birthdate, Sex sex, Owner owner) {
         this.id = id;
         this.name =name;
         this.description = description;
@@ -57,8 +57,8 @@ public class Horse {
 
     public void setSex(Sex sex) { this.sex = sex; }
 
-    public String getOwner() { return owner; }
+    public Owner getOwner() { return owner; }
 
-    public void setOwner(String owner) { this.owner = owner; }
+    public void setOwner(Owner owner) { this.owner = owner; }
 }
 
