@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {Horse} from "../../dto/horse";
 import {HorseService} from "../../service/horse.service";
+import {OutputHorse} from "../../dto/outputHorse";
+import {FullHorse} from "../../dto/fullHorse";
 
 @Component({
   selector: 'app-horse-create',
@@ -9,7 +10,7 @@ import {HorseService} from "../../service/horse.service";
 })
 export class HorseCreateComponent implements OnInit {
 
-  horse: Horse;
+  horse: FullHorse;
   savedSuccess = false;
   error?: string;
 
@@ -18,10 +19,10 @@ export class HorseCreateComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.horse = {} as Horse;
+    this.horse = {} as FullHorse;
   }
 
-  createHorse(horse: Horse): void {
+  createHorse(horse: OutputHorse): void {
     this.service.create(horse).subscribe({
       next: data => {
         this.savedSuccess = true;

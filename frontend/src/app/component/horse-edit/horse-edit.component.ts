@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {HorseService} from '../../service/horse.service';
-import {Horse} from '../../dto/horse';
+import {BasicHorse} from '../../dto/basicHorse';
 import {sexOptions} from '../../types/sex';
+import {OutputHorse} from "../../dto/outputHorse";
+import {FullHorse} from "../../dto/fullHorse";
 
 @Component({
   selector: 'app-horse-edit',
@@ -11,7 +13,7 @@ import {sexOptions} from '../../types/sex';
 })
 export class HorseEditComponent implements OnInit {
 
-  horse: Horse;
+  horse: FullHorse;
   error?: string;
   savedSuccess = false;
 
@@ -35,7 +37,7 @@ export class HorseEditComponent implements OnInit {
     });
   }
 
-  updateHorse(horse: Horse): void {
+  updateHorse(horse: OutputHorse): void {
     this.service.update(horse, horse.id).subscribe({
       next: () => {
         this.savedSuccess = true;

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Horse} from '../../dto/horse';
+import {BasicHorse} from '../../dto/basicHorse';
 import {HorseService} from 'src/app/service/horse.service';
 import {sexOptions} from "../../types/sex";
 import {HorseSearchParams} from "../../dto/horseSearchParams";
@@ -11,7 +11,7 @@ import {HorseSearchParams} from "../../dto/horseSearchParams";
 })
 export class HorseComponent implements OnInit {
   search = false;
-  horses: Horse[];
+  horses: BasicHorse[];
   error?: string;
 
   sexOptions = sexOptions;

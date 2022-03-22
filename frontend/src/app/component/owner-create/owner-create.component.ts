@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Owner} from "../../dto/owner";
-import {Horse} from "../../dto/horse";
+import {BasicHorse} from "../../dto/basicHorse";
 import {OwnerService} from "../../service/owner.service";
 
 @Component({
