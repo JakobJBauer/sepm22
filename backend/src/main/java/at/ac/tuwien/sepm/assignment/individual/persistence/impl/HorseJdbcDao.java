@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.assignment.individual.persistence.impl;
 
 import at.ac.tuwien.sepm.assignment.individual.entity.Horse;
 import at.ac.tuwien.sepm.assignment.individual.entity.HorseSearchParams;
+import at.ac.tuwien.sepm.assignment.individual.entity.Owner;
 import at.ac.tuwien.sepm.assignment.individual.entity.Sex;
 import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
 import at.ac.tuwien.sepm.assignment.individual.exception.PersistenceException;
@@ -19,13 +20,14 @@ import java.util.List;
 @Repository
 public class HorseJdbcDao implements HorseDao {
     private static final String TABLE_NAME = "horse";
-    private static final String SQL_SELECT_ALL = "SELECT * FROM " + TABLE_NAME + " WHERE true";
-    private static final String SQL_SELECT_ONE = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
+    private static final String JOINED_TABLE = "(SELECT h.id, h.name, h.description, h.birthdate, h.sex, h.ownerId, o.firstName, o.lastName, o.email FROM horse as h LEFT OUTER JOIN owner as o on h.ownerId = o.id)";
+    private static final String SQL_SELECT_ALL = "SELECT * FROM " + JOINED_TABLE + " WHERE true";
+    private static final String SQL_SELECT_ONE = "SELECT * FROM " + JOINED_TABLE + " WHERE id = ?";
     private static final String SQL_CREATE = "INSERT INTO " + TABLE_NAME +
-            " (name, description, birthdate, sex, owner)" +
+            " (name, description, birthdate, sex, ownerId)" +
             "VALUES (?, ?, ?, ?, ?)";
     private static final String SQL_UPDATE_BY_ID = "UPDATE " + TABLE_NAME +
-            " SET name = ?, description = ?, birthdate = ?, sex = ?, owner = ?" +
+            " SET name = ?, description = ?, birthdate = ?, sex = ?, ownerId = ?" +
             " WHERE id = ?";
     private static final String SQL_DELETE_BY_ID = "DELETE FROM " + TABLE_NAME + "  WHERE id = ?";
 
@@ -57,7 +59,11 @@ public class HorseJdbcDao implements HorseDao {
             sqlParams.add(horseSearchParams.getSex().toString());
         }
         if (horseSearchParams.getOwnerName() != null) {
-            sqlRequest += " AND LOWER(owner) LIKE CONCAT('%', ?, '%')";
+            sqlRequest += " AND LOWER(firstName) LIKE CONCAT('%', ?, '%')";
+            sqlRequest += " OR LOWER(lastName) LIKE CONCAT('%', ?, '%')";
+            sqlRequest += " OR LOWER(email) LIKE CONCAT('%', ?, '%')";
+            sqlParams.add(horseSearchParams.getOwnerName().toLowerCase());
+            sqlParams.add(horseSearchParams.getOwnerName().toLowerCase());
             sqlParams.add(horseSearchParams.getOwnerName().toLowerCase());
         }
 
@@ -66,7 +72,7 @@ public class HorseJdbcDao implements HorseDao {
                     sqlRequest,
                     this::mapRow,
                     sqlParams.toArray()
-                    );
+            );
         } catch (DataAccessException e) {
             throw new PersistenceException("Could not query all horses", e);
         }
@@ -96,11 +102,11 @@ public class HorseJdbcDao implements HorseDao {
                 stmt.setString(2, horse.getDescription());
                 stmt.setDate(3, Date.valueOf(horse.getBirthdate()));
                 stmt.setString(4, horse.getSex().toString());
-                stmt.setString(5, horse.getOwner());
+                stmt.setLong(5, horse.getOwner().getId());
                 return stmt;
             }, keyHolder);
 
-            horse.setId(((Number)keyHolder.getKeys().get("id")).longValue());
+            horse.setId(((Number) keyHolder.getKeys().get("id")).longValue());
 
             return horse;
         } catch (DataAccessException e) {
@@ -117,7 +123,7 @@ public class HorseJdbcDao implements HorseDao {
                 stmt.setString(2, horse.getDescription());
                 stmt.setDate(3, Date.valueOf(horse.getBirthdate()));
                 stmt.setString(4, horse.getSex().toString());
-                stmt.setString(5, horse.getOwner());
+                stmt.setLong(5, horse.getOwner().getId());
                 stmt.setLong(6, horse.getId());
                 return stmt;
             });
@@ -137,9 +143,9 @@ public class HorseJdbcDao implements HorseDao {
     public void deleteHorseById(long id) {
         try {
             var deletedHorseId = jdbcTemplate.update(connection -> {
-               PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_BY_ID);
-               stmt.setLong(1, id);
-               return stmt;
+                PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_BY_ID);
+                stmt.setLong(1, id);
+                return stmt;
             });
             if (deletedHorseId == 0)
                 throw new NoResultException("Could not delete Horse " + id);
@@ -155,7 +161,14 @@ public class HorseJdbcDao implements HorseDao {
         horse.setDescription(result.getString("description"));
         horse.setBirthdate(result.getDate("birthdate").toLocalDate());
         horse.setSex(Sex.valueOf(result.getString("sex")));
-        horse.setOwner(result.getString("owner"));
+        if (result.getLong("ownerId") != 0) {
+            horse.setOwner(new Owner(
+                    result.getLong("ownerId"),
+                    result.getString("firstName"),
+                    result.getString("lastName"),
+                    result.getString("email")
+            ));
+        }
         return horse;
     }
 }

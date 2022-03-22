@@ -8,6 +8,13 @@ public class Owner {
 
     public Owner() {}
 
+    public Owner(Long id, String firstName, String lastName, String email) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
+
     public Owner(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
