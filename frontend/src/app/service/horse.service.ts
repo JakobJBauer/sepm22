@@ -2,8 +2,10 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {environment} from 'src/environments/environment';
-import {Horse} from '../dto/horse';
+import {BasicHorse} from '../dto/basicHorse';
 import {HorseSearchParams} from "../dto/horseSearchParams";
+import {FullHorse} from "../dto/fullHorse";
+import {OutputHorse} from "../dto/outputHorse";
 
 const baseUri = environment.backendUrl + '/horses';
 
@@ -21,20 +23,20 @@ export class HorseService {
    *
    * @return observable list of found horses.
    */
-  getAll(searchParams: HorseSearchParams): Observable<Horse[]> {
-    return this.http.get<Horse[]>(baseUri, {params: searchParams as HttpParams});
+  getAll(searchParams: HorseSearchParams): Observable<BasicHorse[]> {
+    return this.http.get<BasicHorse[]>(baseUri, {params: searchParams as HttpParams});
   }
 
-  getById(id: number): Observable<Horse> {
-    return this.http.get<Horse>(baseUri + '/' + id.toString());
+  getById(id: number): Observable<FullHorse> {
+    return this.http.get<FullHorse>(baseUri + '/' + id.toString());
   }
 
-  create(horse: Horse): Observable<Horse> {
-    return this.http.post<Horse>(baseUri, horse);
+  create(horse: OutputHorse): Observable<BasicHorse> {
+    return this.http.post<BasicHorse>(baseUri, horse);
   }
 
-  update(horse: Horse, id: number): Observable<Horse> {
-    return this.http.put<Horse>(baseUri + '/' + id.toString(), horse);
+  update(horse: OutputHorse, id: number): Observable<FullHorse> {
+    return this.http.put<FullHorse>(baseUri + '/' + id.toString(), horse);
   }
 
   deleteById(id: number): Observable<any> {
