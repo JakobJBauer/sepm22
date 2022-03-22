@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.rest;
 
-import at.ac.tuwien.sepm.assignment.individual.dto.HorseDto;
+import at.ac.tuwien.sepm.assignment.individual.dto.BasicHorseOutputDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +46,7 @@ public class HorseEndpointTest {
         ).andExpect(status().isOk())
         .andReturn().getResponse().getContentAsByteArray();
 
-    List<HorseDto> horseResult = objectMapper.readerFor(HorseDto.class).<HorseDto>readValues(body).readAll();
+    List<BasicHorseOutputDto> horseResult = objectMapper.readerFor(BasicHorseOutputDto.class).<BasicHorseOutputDto>readValues(body).readAll();
 
     assertThat(horseResult).isNotNull();
     assertThat(horseResult.size()).isEqualTo(1);
