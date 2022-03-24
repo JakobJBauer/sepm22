@@ -18,3 +18,10 @@ CREATE TABLE IF NOT EXISTS horse
   ownerId       BIGINT,
    FOREIGN KEY (ownerId) REFERENCES owner (id)
 );
+
+CREATE TABLE IF NOT EXISTS child_of
+(
+    child         BIGINT REFERENCES horse (id),
+    parent        BIGINT REFERENCES horse (id),
+    PRIMARY KEY (child, parent)
+);

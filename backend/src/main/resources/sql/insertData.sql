@@ -11,3 +11,6 @@ INSERT INTO horse (name, description, birthdate, sex, ownerId)
 VALUES ('Ramzan', 'Horsus Chonkus', CURRENT_DATE, 'MALE', 1),
        ('Ash', 'Minorus Taurus', '2020-09-20', 'MALE', 1)
 ;
+
+-- INSERT INTO child_of(child, parent)
+-- VALUES (1, 2);
