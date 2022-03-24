@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.dto;
 
-public record OwnerSearchParamsDto(
+public record SearchParamsDto(
         String searchTerm,
         Integer resultSize
 ) {
