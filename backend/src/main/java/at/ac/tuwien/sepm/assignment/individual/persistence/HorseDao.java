@@ -17,10 +17,12 @@ public interface HorseDao {
     List<Horse> getAll(HorseSearchParams horseSearchParams);
 
     Horse getHorseById(long id);
+    List<SearchHorse> parentOptions(ParentSearchParams parentSearchParams);
+
 
     Horse createHorse(Horse horse);
 
     Horse updateHorse(Horse horse);
 
-    void deleteHorseById(long id);
+    void deleteHorseById(Long id);
 }

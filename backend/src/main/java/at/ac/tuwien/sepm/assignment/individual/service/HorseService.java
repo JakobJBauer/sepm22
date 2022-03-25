@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.service;
 
-import at.ac.tuwien.sepm.assignment.individual.entity.Horse;
-import at.ac.tuwien.sepm.assignment.individual.entity.HorseSearchParams;
+import at.ac.tuwien.sepm.assignment.individual.entity.*;
 
 import java.util.List;
 
@@ -15,11 +14,13 @@ public interface HorseService {
      */
     List<Horse> allHorses(HorseSearchParams horseSearchParams);
 
-    Horse getHorseById(long id);
+    List<SearchHorse> parentOptions(ParentSearchParams parentSearchParams);
+
+    Horse getHorseById(Long id);
 
     Horse createHorse(Horse horse);
 
     Horse updateHorse(Horse horse);
 
-    void deleteHorseById(long id);
+    void deleteHorseById(Long id);
 }

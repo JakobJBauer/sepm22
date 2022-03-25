@@ -13,12 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
 public class HorseJdbcDao implements HorseDao {
     private static final String TABLE_NAME = "horse";
-    private static final String JOINED_TABLE = "(SELECT h.id, h.name, h.description, h.birthdate, h.sex, h.ownerId, o.firstName, o.lastName, o.email FROM horse as h LEFT OUTER JOIN owner as o on h.ownerId = o.id)";
     private final static String JOINED_TABLE = "(SELECT horse.id, name, description, birthdate, sex, parents, ownerId, firstname, lastname, email  FROM (\n" +
             "        SELECT rs1.id, name, description, birthdate, sex, GROUP_CONCAT(parent SEPARATOR ',') as parents,  ownerId FROM\n" +
             "        (SELECT id, name, description, birthdate, sex, ownerId, parent FROM HORSE \n" +
@@ -32,6 +32,7 @@ public class HorseJdbcDao implements HorseDao {
     private static final String CHILD_DELETE_BY_ANY = "DELETE FROM " + CHILD_TABLE + " WHERE child = ? OR parent = ?";
     private static final String CHILD_ADD = "INSERT INTO " + CHILD_TABLE + " (child, parent) VALUES (?, ?)";
     private static final String SQL_SELECT_ALL = "SELECT * FROM " + JOINED_TABLE + " WHERE true";
+    private static final String SQL_SELECT_PARENTS = "SELECT id, name, sex FROM " + TABLE_NAME + " WHERE true";
     private static final String SQL_SELECT_ONE = "SELECT * FROM " + JOINED_TABLE + " WHERE id = ?";
     private static final String SQL_CREATE = "INSERT INTO " + TABLE_NAME +
             " (name, description, birthdate, sex, ownerId)" +
@@ -89,7 +90,38 @@ public class HorseJdbcDao implements HorseDao {
     }
 
     @Override
-    public Horse getHorseById(long id) {
+    public List<SearchHorse> parentOptions(ParentSearchParams parentSearchParams) {
+        String request = SQL_SELECT_PARENTS;
+        ArrayList<Object> sqlParams = new ArrayList<>();
+
+        if (parentSearchParams.getSearchTerm() != null) {
+            request += " AND LOWER(name) LIKE CONCAT('%', ?, '%')";
+            sqlParams.add(parentSearchParams.getSearchTerm().toLowerCase());
+        }
+
+        if (parentSearchParams.getSex() != null) {
+            request += " AND sex = ?";
+            sqlParams.add(parentSearchParams.getSex().toString());
+        }
+
+        if (parentSearchParams.getResultSize() != null) {
+            request += " LIMIT ?";
+            sqlParams.add(parentSearchParams.getResultSize());
+        }
+
+        try {
+            return jdbcTemplate.query(
+                    request,
+                    this::mapRowSearchHorse,
+                    sqlParams.toArray()
+            );
+        } catch (DataAccessException e) {
+            throw new PersistenceException("Could not query all horses", e);
+        }
+    }
+
+    @Override
+    public Horse getHorseById(Long id) {
         try {
             var horses = jdbcTemplate.query(SQL_SELECT_ONE, this::mapRow, id);
 
@@ -188,6 +220,19 @@ public class HorseJdbcDao implements HorseDao {
             throw new PersistenceException("Could not remove all relationships to horse " + horseId, e);
         }
     }
+
+    private void removeParentHorses(Long horseId) {
+        try {
+            jdbcTemplate.update(connection -> {
+                PreparedStatement pstmt = connection.prepareStatement(CHILD_DELETE_BY_CHILD);
+                pstmt.setLong(1, horseId);
+                return pstmt;
+            });
+        } catch (DataAccessException e) {
+            throw new PersistenceException("Could not remove parent relationship to horse " + horseId, e);
+        }
+    }
+
     private void addParentHorse(Long horseId, Long parentHorseId) {
         if (parentHorseId == null) return;
         try {
@@ -200,6 +245,14 @@ public class HorseJdbcDao implements HorseDao {
         } catch (DataAccessException e) {
             throw new PersistenceException("Could not add parent relationship to horse " + horseId, e);
         }
+    }
+
+    private SearchHorse mapRowSearchHorse(ResultSet result, int rownum) throws SQLException {
+        return new SearchHorse(
+                result.getLong("id"),
+                result.getString("name"),
+                Sex.valueOf(result.getString("sex"))
+        );
     }
 
     private Horse mapRow(ResultSet result, int rownum) throws SQLException {

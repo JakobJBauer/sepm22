@@ -5,6 +5,10 @@ import at.ac.tuwien.sepm.assignment.individual.entity.Horse;
 import at.ac.tuwien.sepm.assignment.individual.service.OwnerService;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Component
 public class HorseMapper {
 
@@ -17,6 +21,10 @@ public class HorseMapper {
     ) {
         this.ownerMapper = ownerMapper;
         this.ownerService = ownerService;
+    }
+
+    public SearchHorseDto entityToSearchHorseDto(SearchHorse searchHorse) {
+        return new SearchHorseDto(searchHorse.getId(), searchHorse.getName(), searchHorse.getSex());
     }
 
     public BasicHorseOutputDto entityToBasicDto(Horse horse) {
