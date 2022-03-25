@@ -141,11 +141,7 @@ public class HorseJdbcDao implements HorseDao {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
                 PreparedStatement stmt = connection.prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS);
-                stmt.setString(1, horse.getName());
-                stmt.setString(2, horse.getDescription());
-                stmt.setDate(3, Date.valueOf(horse.getBirthdate()));
-                stmt.setString(4, horse.getSex().toString());
-                stmt.setObject(5, horse.getOwner() != null ? horse.getOwner().getId() : null);
+                setRequestParams(horse, stmt);
                 return stmt;
             }, keyHolder);
 
@@ -166,11 +162,7 @@ public class HorseJdbcDao implements HorseDao {
         try {
             var entityId = jdbcTemplate.update(connection -> {
                 PreparedStatement stmt = connection.prepareStatement(SQL_UPDATE_BY_ID);
-                stmt.setString(1, horse.getName());
-                stmt.setString(2, horse.getDescription());
-                stmt.setDate(3, Date.valueOf(horse.getBirthdate()));
-                stmt.setString(4, horse.getSex().toString());
-                stmt.setObject(5, horse.getOwner() != null ? horse.getOwner().getId() : null);
+                setRequestParams(horse, stmt);
                 stmt.setObject(6, horse.getId());
                 return stmt;
             });
@@ -189,6 +181,14 @@ public class HorseJdbcDao implements HorseDao {
             addParentHorse(horse.getId(), parent);
 
         return horse;
+    }
+
+    private void setRequestParams(Horse horse, PreparedStatement stmt) throws SQLException {
+        stmt.setString(1, horse.getName());
+        stmt.setString(2, horse.getDescription());
+        stmt.setDate(3, Date.valueOf(horse.getBirthdate()));
+        stmt.setString(4, horse.getSex().toString());
+        stmt.setObject(5, horse.getOwner() != null ? horse.getOwner().getId() : null);
     }
 
     @Override
