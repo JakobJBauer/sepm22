@@ -6,6 +6,8 @@ import {BasicHorse} from '../dto/basicHorse';
 import {HorseSearchParams} from "../dto/horseSearchParams";
 import {FullHorse} from "../dto/fullHorse";
 import {OutputHorse} from "../dto/outputHorse";
+import {ParentSearchParams} from "../dto/parentSearchParams";
+import {ParentHorse} from "../dto/parentHorse";
 
 const baseUri = environment.backendUrl + '/horses';
 
@@ -25,6 +27,10 @@ export class HorseService {
    */
   getAll(searchParams: HorseSearchParams): Observable<BasicHorse[]> {
     return this.http.get<BasicHorse[]>(baseUri, {params: searchParams as HttpParams});
+  }
+
+  getParentOptions(searchParams: ParentSearchParams): Observable<ParentHorse[]> {
+    return this.http.get<ParentHorse[]>(baseUri + '/parentsearch', {params: searchParams as HttpParams});
   }
 
   getById(id: number): Observable<FullHorse> {
