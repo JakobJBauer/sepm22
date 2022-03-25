@@ -1,4 +1,4 @@
-import {Sex} from "../types/sex";
+import {Sex} from '../types/sex';
 
 export interface OutputHorse {
   id?: number;
@@ -7,4 +7,5 @@ export interface OutputHorse {
   birthdate: Date;
   sex: Sex;
   ownerId: number;
+  parentIds: number[];
 }

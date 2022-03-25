@@ -1,5 +1,12 @@
-import {Sex} from "../types/sex";
-import {Owner} from "./owner";
+import {Sex} from '../types/sex';
+import {Owner} from './owner';
+
+export interface ParentHorse {
+  id: number;
+  birthdate: Date;
+  sex: Sex;
+  name: string;
+}
 
 export interface FullHorse {
   id?: number;
@@ -8,4 +15,5 @@ export interface FullHorse {
   birthdate: Date;
   sex: Sex;
   owner: Owner;
+  parents: ParentHorse[];
 }
