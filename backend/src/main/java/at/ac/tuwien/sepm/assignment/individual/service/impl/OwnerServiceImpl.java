@@ -23,6 +23,7 @@ public class OwnerServiceImpl implements OwnerService {
 
     @Override
     public Owner getOwnerById(Long id) {
+        if (id == null) return null;
         return dao.getOwnerById(id);
     }
 

@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.persistence;
 
-import at.ac.tuwien.sepm.assignment.individual.entity.Horse;
-import at.ac.tuwien.sepm.assignment.individual.entity.HorseSearchParams;
+import at.ac.tuwien.sepm.assignment.individual.entity.*;
 
 import java.util.List;
 
@@ -16,9 +15,9 @@ public interface HorseDao {
      */
     List<Horse> getAll(HorseSearchParams horseSearchParams);
 
-    Horse getHorseById(long id);
     List<SearchHorse> parentOptions(ParentSearchParams parentSearchParams);
 
+    Horse getHorseById(Long id);
 
     Horse createHorse(Horse horse);
 

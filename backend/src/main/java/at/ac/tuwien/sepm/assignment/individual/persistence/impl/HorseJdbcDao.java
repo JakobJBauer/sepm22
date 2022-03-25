@@ -70,9 +70,9 @@ public class HorseJdbcDao implements HorseDao {
             sqlParams.add(horseSearchParams.getSex().toString());
         }
         if (horseSearchParams.getOwnerName() != null) {
-            sqlRequest += " AND LOWER(firstName) LIKE CONCAT('%', ?, '%')";
+            sqlRequest += " AND (LOWER(firstName) LIKE CONCAT('%', ?, '%')";
             sqlRequest += " OR LOWER(lastName) LIKE CONCAT('%', ?, '%')";
-            sqlRequest += " OR LOWER(email) LIKE CONCAT('%', ?, '%')";
+            sqlRequest += " OR LOWER(email) LIKE CONCAT('%', ?, '%'))";
             sqlParams.add(horseSearchParams.getOwnerName().toLowerCase());
             sqlParams.add(horseSearchParams.getOwnerName().toLowerCase());
             sqlParams.add(horseSearchParams.getOwnerName().toLowerCase());
@@ -161,6 +161,7 @@ public class HorseJdbcDao implements HorseDao {
     }
 
     @Override
+    @Transactional
     public Horse updateHorse(Horse horse) {
         try {
             var entityId = jdbcTemplate.update(connection -> {
@@ -169,8 +170,8 @@ public class HorseJdbcDao implements HorseDao {
                 stmt.setString(2, horse.getDescription());
                 stmt.setDate(3, Date.valueOf(horse.getBirthdate()));
                 stmt.setString(4, horse.getSex().toString());
-                stmt.setLong(5, horse.getOwner().getId());
-                stmt.setLong(6, horse.getId());
+                stmt.setObject(5, horse.getOwner() != null ? horse.getOwner().getId() : null);
+                stmt.setObject(6, horse.getId());
                 return stmt;
             });
 
@@ -179,7 +180,6 @@ public class HorseJdbcDao implements HorseDao {
                         "Could not find a horse with id " + horse.getId()
                 );
 
-            return horse;
         } catch (DataAccessException e) {
             throw new PersistenceException("Could not update Horse " + horse.getId(), e);
         }

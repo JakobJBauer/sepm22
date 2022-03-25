@@ -59,7 +59,7 @@ public class OwnerJdbcDao implements OwnerDao {
                     sqlParams.toArray()
             );
         } catch (DataAccessException e) {
-            throw new PersistenceException("Could not query all horses", e);
+            throw new PersistenceException("Could not query all owners", e);
         }
     }
 
