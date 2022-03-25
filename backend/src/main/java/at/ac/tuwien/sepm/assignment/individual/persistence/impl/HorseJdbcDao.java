@@ -1,9 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.persistence.impl;
 
-import at.ac.tuwien.sepm.assignment.individual.entity.Horse;
-import at.ac.tuwien.sepm.assignment.individual.entity.HorseSearchParams;
-import at.ac.tuwien.sepm.assignment.individual.entity.Owner;
-import at.ac.tuwien.sepm.assignment.individual.entity.Sex;
+import at.ac.tuwien.sepm.assignment.individual.entity.*;
 import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
 import at.ac.tuwien.sepm.assignment.individual.exception.PersistenceException;
 import at.ac.tuwien.sepm.assignment.individual.persistence.HorseDao;
@@ -12,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,6 +19,18 @@ import java.util.List;
 public class HorseJdbcDao implements HorseDao {
     private static final String TABLE_NAME = "horse";
     private static final String JOINED_TABLE = "(SELECT h.id, h.name, h.description, h.birthdate, h.sex, h.ownerId, o.firstName, o.lastName, o.email FROM horse as h LEFT OUTER JOIN owner as o on h.ownerId = o.id)";
+    private final static String JOINED_TABLE = "(SELECT horse.id, name, description, birthdate, sex, parents, ownerId, firstname, lastname, email  FROM (\n" +
+            "        SELECT rs1.id, name, description, birthdate, sex, GROUP_CONCAT(parent SEPARATOR ',') as parents,  ownerId FROM\n" +
+            "        (SELECT id, name, description, birthdate, sex, ownerId, parent FROM HORSE \n" +
+            "        LEFT OUTER JOIN child_of ON horse.id = child_of.child) as rs1\n" +
+            "group by id\n" +
+            ")  as horse\n" +
+            "LEFT JOIN owner on horse.ownerId = owner.id)";
+
+    private static final String CHILD_TABLE = "child_of";
+    private static final String CHILD_DELETE_BY_CHILD = "DELETE FROM " + CHILD_TABLE + " WHERE child = ?";
+    private static final String CHILD_DELETE_BY_ANY = "DELETE FROM " + CHILD_TABLE + " WHERE child = ? OR parent = ?";
+    private static final String CHILD_ADD = "INSERT INTO " + CHILD_TABLE + " (child, parent) VALUES (?, ?)";
     private static final String SQL_SELECT_ALL = "SELECT * FROM " + JOINED_TABLE + " WHERE true";
     private static final String SQL_SELECT_ONE = "SELECT * FROM " + JOINED_TABLE + " WHERE id = ?";
     private static final String SQL_CREATE = "INSERT INTO " + TABLE_NAME +
@@ -93,6 +103,7 @@ public class HorseJdbcDao implements HorseDao {
     }
 
     @Override
+    @Transactional
     public Horse createHorse(Horse horse) {
         try {
             KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -102,16 +113,19 @@ public class HorseJdbcDao implements HorseDao {
                 stmt.setString(2, horse.getDescription());
                 stmt.setDate(3, Date.valueOf(horse.getBirthdate()));
                 stmt.setString(4, horse.getSex().toString());
-                stmt.setLong(5, horse.getOwner().getId());
+                stmt.setObject(5, horse.getOwner() != null ? horse.getOwner().getId() : null);
                 return stmt;
             }, keyHolder);
 
             horse.setId(((Number) keyHolder.getKeys().get("id")).longValue());
-
-            return horse;
         } catch (DataAccessException e) {
             throw new PersistenceException("Could not create a new Horse ", e);
         }
+
+        for (var parent : horse.getParentIds())
+            addParentHorse(horse.getId(), parent);
+
+        return horse;
     }
 
     @Override
@@ -137,10 +151,16 @@ public class HorseJdbcDao implements HorseDao {
         } catch (DataAccessException e) {
             throw new PersistenceException("Could not update Horse " + horse.getId(), e);
         }
+
+        removeParentHorses(horse.getId());
+        for (var parent : horse.getParentIds())
+            addParentHorse(horse.getId(), parent);
+
+        return horse;
     }
 
     @Override
-    public void deleteHorseById(long id) {
+    public void deleteHorseById(Long id) {
         try {
             var deletedHorseId = jdbcTemplate.update(connection -> {
                 PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_BY_ID);
@@ -151,6 +171,34 @@ public class HorseJdbcDao implements HorseDao {
                 throw new NoResultException("Could not delete Horse " + id);
         } catch (DataAccessException e) {
             throw new PersistenceException("Could not delete Horse " + id, e);
+        }
+
+        removeHorseRelations(id);
+    }
+
+    private void removeHorseRelations(Long horseId) {
+        try {
+            jdbcTemplate.update(connection -> {
+                PreparedStatement pstmt = connection.prepareStatement(CHILD_DELETE_BY_ANY);
+                pstmt.setLong(1, horseId);
+                pstmt.setLong(2, horseId);
+                return pstmt;
+            });
+        } catch (DataAccessException e) {
+            throw new PersistenceException("Could not remove all relationships to horse " + horseId, e);
+        }
+    }
+    private void addParentHorse(Long horseId, Long parentHorseId) {
+        if (parentHorseId == null) return;
+        try {
+            jdbcTemplate.update(connection -> {
+                PreparedStatement pstmt = connection.prepareStatement(CHILD_ADD);
+                pstmt.setLong(1, horseId);
+                pstmt.setLong(2, parentHorseId);
+                return pstmt;
+            });
+        } catch (DataAccessException e) {
+            throw new PersistenceException("Could not add parent relationship to horse " + horseId, e);
         }
     }
 
@@ -168,6 +216,10 @@ public class HorseJdbcDao implements HorseDao {
                     result.getString("lastName"),
                     result.getString("email")
             ));
+        }
+        if (result.getString("parents") != null) {
+            var parents = Arrays.stream(result.getString("parents").split(",")).map(Long::valueOf);
+            horse.setParentIds(parents.toArray(Long[]::new));
         }
         return horse;
     }

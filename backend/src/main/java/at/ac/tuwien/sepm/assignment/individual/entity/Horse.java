@@ -9,24 +9,35 @@ public class Horse {
     private LocalDate birthdate;
     private Sex sex;
     private Owner owner;
+    private Long[] parentIds;
 
     public Horse() {}
 
-    public Horse(String name, String description, LocalDate birthdate, Sex sex, Owner owner) {
+    public Horse(String name, String description, LocalDate birthdate, Sex sex, Owner owner, Long[] parentIds) {
         this.name =name;
         this.description = description;
         this.birthdate = birthdate;
         this.sex = sex;
         this.owner = owner;
+        this.parentIds = parentIds;
     }
 
-    public Horse(Long id, String name, String description, LocalDate birthdate, Sex sex, Owner owner) {
+    public Horse(Long id, String name, String description, LocalDate birthdate, Sex sex, Owner owner, Long[] parentIds) {
         this.id = id;
         this.name =name;
         this.description = description;
         this.birthdate = birthdate;
         this.sex = sex;
         this.owner = owner;
+        this.parentIds = parentIds;
+    }
+
+    public Long[] getParentIds() {
+        return parentIds;
+    }
+
+    public void setParentIds(Long[] parentIds) {
+        this.parentIds = parentIds;
     }
 
     public Long getId() {

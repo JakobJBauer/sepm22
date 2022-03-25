@@ -22,7 +22,8 @@ public class HorseServiceImpl implements HorseService {
     }
 
     @Override
-    public Horse getHorseById(long id) {
+    public Horse getHorseById(Long id) {
+        if (id == null) return null;
         return dao.getHorseById(id);
     }
 
@@ -37,7 +38,7 @@ public class HorseServiceImpl implements HorseService {
     }
 
     @Override
-    public void deleteHorseById(long id) {
+    public void deleteHorseById(Long id) {
         dao.deleteHorseById(id);
     }
 }

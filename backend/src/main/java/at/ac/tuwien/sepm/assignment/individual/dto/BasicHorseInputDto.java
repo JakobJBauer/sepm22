@@ -10,6 +10,7 @@ public record BasicHorseInputDto(
         String description,
         LocalDate birthdate,
         Sex sex,
-        Long ownerId
+        Long ownerId,
+        Long[] parentIds
 ) {
 }

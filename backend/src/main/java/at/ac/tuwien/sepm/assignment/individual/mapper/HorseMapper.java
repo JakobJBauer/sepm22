@@ -1,8 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.mapper;
 
-import at.ac.tuwien.sepm.assignment.individual.dto.BasicHorseInputDto;
-import at.ac.tuwien.sepm.assignment.individual.dto.BasicHorseOutputDto;
-import at.ac.tuwien.sepm.assignment.individual.dto.FullHorseOutputDto;
+import at.ac.tuwien.sepm.assignment.individual.dto.*;
 import at.ac.tuwien.sepm.assignment.individual.entity.Horse;
 import at.ac.tuwien.sepm.assignment.individual.service.OwnerService;
 import org.springframework.stereotype.Component;
@@ -50,7 +48,8 @@ public class HorseMapper {
                 basicHorseInputDto.description(),
                 basicHorseInputDto.birthdate(),
                 basicHorseInputDto.sex(),
-                ownerService.getOwnerById(basicHorseInputDto.ownerId())
+                ownerService.getOwnerById(basicHorseInputDto.ownerId()),
+                basicHorseInputDto.parentIds()
         );
     }
 
@@ -60,7 +59,8 @@ public class HorseMapper {
                 basicHorseInputDto.description(),
                 basicHorseInputDto.birthdate(),
                 basicHorseInputDto.sex(),
-                ownerService.getOwnerById(basicHorseInputDto.ownerId())
+                ownerService.getOwnerById(basicHorseInputDto.ownerId()),
+                basicHorseInputDto.parentIds()
         );
     }
 }
