@@ -1,4 +1,4 @@
-<form #horseForm="ngForm" (ngSubmit)="onSubmit(); reset && horseForm.reset()" class="d-grid">
+<form #horseForm="ngForm" (ngSubmit)="onSubmit(); reset && horseForm.resetForm()" class="d-grid">
   <div class="row">
     <div class="input-wrapper col-md-6 col-sm-12">
       <label for="nameInp">Name:</label>
@@ -28,7 +28,7 @@
     <div class="input-wrapper col-md-6 col-sm-12">
       <label for="ownerInp">Owner:</label>
       <input
-        [ngbTypeahead]="search"
+        [ngbTypeahead]="searchOwner"
         class="form-control"
         type="text"
         [(ngModel)]="horse.owner"
@@ -38,7 +38,38 @@
         [inputFormatter]="ownerNameFormatter"
       >
     </div>
+  </div>
+  <div class="row">
 
+    <div class="input-wrapper col-md-6 col-sm-12">
+      <label for="ownerInp">Father:</label>
+      <input
+        [ngbTypeahead]="searchFather"
+        class="form-control"
+        type="text"
+        [(ngModel)]="horse.parents[0]"
+        id="fatherInp"
+        name="father"
+        [resultFormatter]="horseNameFormatter"
+        [inputFormatter]="horseNameFormatter"
+      >
+    </div>
+
+    <div class="input-wrapper col-md-6 col-sm-12">
+      <label for="ownerInp">Mother:</label>
+      <input
+        [ngbTypeahead]="searchMother"
+        class="form-control"
+        type="text"
+        [(ngModel)]="horse.parents[1]"
+        id="motherInp"
+        name="mother"
+        [resultFormatter]="horseNameFormatter"
+        [inputFormatter]="horseNameFormatter"
+      >
+    </div>
+  </div>
+  <div class="row">
     <input class="btn btn-primary" type="submit" value="Submit" [disabled]="!horseForm.form.valid || horseForm.pristine">
   </div>
 </form>
