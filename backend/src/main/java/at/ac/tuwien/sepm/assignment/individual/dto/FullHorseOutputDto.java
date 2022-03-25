@@ -10,6 +10,7 @@ public record FullHorseOutputDto(
         String description,
         LocalDate birthdate,
         Sex sex,
-        BasicOwnerDto owner
+        BasicOwnerDto owner,
+        MinimalHorseDto[] parents
 ) {
 }
