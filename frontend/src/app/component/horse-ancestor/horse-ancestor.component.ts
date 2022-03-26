@@ -10,7 +10,7 @@ import {AncestorHorse} from "../../dto/ancestorHorse";
 export class HorseAncestorComponent implements OnInit {
 
   horses: AncestorHorse[];
-  selectedDepth?: number;
+  selectedDepth: number;
   error?: string;
   spin: boolean;
 
@@ -19,10 +19,11 @@ export class HorseAncestorComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadTree(5);
+    this.selectedDepth = 5;
+    this.loadTree();
   }
 
-  loadTree(depth: number): void {
+  loadTree(depth: number = this.selectedDepth): void {
     this.spin = true;
     this.service.getAncestorTree(depth).subscribe({
       next: horses => this.horses = horses,

@@ -29,7 +29,7 @@
       </div>
     </ng-template>
     <ng-template ngbPanelContent>
-      <app-ancestor-node *ngFor="let parent of horse.parents" [horse]="parent"></app-ancestor-node>
+      <app-ancestor-node *ngFor="let parent of horse.parents" [horse]="parent" (reloadTrigger)="reloadTrigger.emit($event)"></app-ancestor-node>
     </ng-template>
   </ngb-panel>
 </ngb-accordion>

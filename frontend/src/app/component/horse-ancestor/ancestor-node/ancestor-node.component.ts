@@ -1,6 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {AncestorHorse} from "../../../dto/ancestorHorse";
 import {HorseService} from "../../../service/horse.service";
+import {OutputHorse} from "../../../dto/outputHorse";
 
 @Component({
   selector: 'app-ancestor-node',
@@ -10,6 +11,7 @@ import {HorseService} from "../../../service/horse.service";
 export class AncestorNodeComponent implements OnInit {
 
   @Input() horse: AncestorHorse;
+  @Output() reloadTrigger = new EventEmitter<boolean>();
   expanded: boolean;
 
   constructor(
@@ -22,7 +24,10 @@ export class AncestorNodeComponent implements OnInit {
 
   deleteHorseById(id: number): void {
     this.service.deleteById(id).subscribe({
-      next: value => console.log('Deleted'),
+      next: value => {
+        console.log('Deleted');
+        this.reloadTrigger.emit(true);
+      },
       error: err => console.log('error')
     });
   }

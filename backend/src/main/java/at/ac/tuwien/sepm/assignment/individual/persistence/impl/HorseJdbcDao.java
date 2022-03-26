@@ -218,7 +218,9 @@ public class HorseJdbcDao implements HorseDao {
     }
 
     @Override
+    @Transactional
     public void deleteHorseById(Long id) {
+        this.removeHorseRelations(id);
         try {
             var deletedHorseId = jdbcTemplate.update(connection -> {
                 PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_BY_ID);
@@ -230,8 +232,6 @@ public class HorseJdbcDao implements HorseDao {
         } catch (DataAccessException e) {
             throw new PersistenceException("Could not delete Horse " + id, e);
         }
-
-        removeHorseRelations(id);
     }
 
     private void removeHorseRelations(Long horseId) {
