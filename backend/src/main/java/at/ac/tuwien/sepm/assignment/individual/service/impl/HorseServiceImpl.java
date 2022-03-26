@@ -26,6 +26,12 @@ public class HorseServiceImpl implements HorseService {
     }
 
     @Override
+    public List<AncestorTreeHorse> getAncestorTree(Integer maxGenerations) {
+        if (maxGenerations == null) maxGenerations = 5;
+        return dao.getAncestorTree(maxGenerations);
+    }
+
+    @Override
     public Horse getHorseById(Long id) {
         if (id == null) return null;
         return dao.getHorseById(id);

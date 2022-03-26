@@ -16,6 +16,8 @@ public interface HorseService {
 
     List<SearchHorse> parentOptions(ParentSearchParams parentSearchParams);
 
+    List<AncestorTreeHorse> getAncestorTree(Integer maxGenerations);
+
     Horse getHorseById(Long id);
 
     Horse createHorse(Horse horse);
