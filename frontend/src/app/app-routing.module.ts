@@ -6,11 +6,13 @@ import {HorseDetailsComponent} from './component/horse-details/horse-details.com
 import {HorseCreateComponent} from './component/horse-create/horse-create.component';
 import {OwnerCreateComponent} from './component/owner-create/owner-create.component';
 import {OwnerComponent} from './component/owner/owner.component';
+import {HorseAncestorComponent} from './component/horse-ancestor/horse-ancestor.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'horses', pathMatch: 'full'},
   {path: 'horses', component: HorseComponent},
   {path: 'horses/create', component: HorseCreateComponent},
+  {path: 'horses/ancestors', component: HorseAncestorComponent},
   {path: 'horses/:id/edit', component: HorseEditComponent},
   {path: 'horses/:id/details', component: HorseDetailsComponent},
   {path: 'owners', component: OwnerComponent},
