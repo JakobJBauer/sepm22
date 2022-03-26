@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.assignment.individual.rest;
 
 import at.ac.tuwien.sepm.assignment.individual.dto.*;
+import at.ac.tuwien.sepm.assignment.individual.entity.AncestorTreeHorse;
 import at.ac.tuwien.sepm.assignment.individual.entity.ParentSearchParams;
 import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
 import at.ac.tuwien.sepm.assignment.individual.mapper.HorseMapper;
@@ -38,6 +39,11 @@ public class HorseEndpoint {
     public Stream<SearchHorseDto> getParentOptions(ParentSearchParamsDto parentSearchParamsDto) {
         return service.parentOptions(parentSearchMapper.dtoToEntity(parentSearchParamsDto))
                 .stream().map(mapper::entityToSearchHorseDto);
+    }
+
+    @GetMapping(path = "/ancestor-tree")
+    public Stream<AncestorTreeHorseDto> getAncestorTree(@RequestParam(value = "maxGeneration", required = false) Integer maxGenerations) {
+        return service.getAncestorTree(maxGenerations).stream().map(mapper::entityToDto);
     }
 
     @GetMapping(path = "/{horseId}")
