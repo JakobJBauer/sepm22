@@ -1,0 +1,35 @@
+<ngb-accordion #node="ngbAccordion">
+  <ngb-panel [id]="'node-' + horse.id">
+    <ng-template ngbPanelHeader class="d-grid">
+      <div class="row custom-header">
+        <div class="col-3">
+          <button *ngIf="horse.parents.length" type="button" class="btn btn-outline-primary"
+                  ngbPanelToggle>{{node.isExpanded('node-' + horse.id) ? 'Collaps' : 'Expand'}}</button>
+        </div>
+        <div class="col-3">
+          <h4>{{horse.name}}</h4>
+        </div>
+        <div class="col-3">
+          <span class="fw-bold">{{horse.birthdate}}</span>
+        </div>
+        <div class="col-3">
+          <div class="float-end">
+            <input type="button"
+                   class="btn btn-outline-primary me-1"
+                   value="Details"
+                   [routerLink]="'/horses/' + horse.id.toString() + '/details'"
+            />
+            <input type="button"
+                   class="btn btn-outline-danger"
+                   value="Delete"
+                   (click)="deleteHorseById(horse.id)"
+            />
+          </div>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template ngbPanelContent>
+      <app-ancestor-node *ngFor="let parent of horse.parents" [horse]="parent"></app-ancestor-node>
+    </ng-template>
+  </ngb-panel>
+</ngb-accordion>
