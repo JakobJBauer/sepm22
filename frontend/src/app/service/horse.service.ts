@@ -8,6 +8,7 @@ import {FullHorse} from "../dto/fullHorse";
 import {OutputHorse} from "../dto/outputHorse";
 import {ParentSearchParams} from "../dto/parentSearchParams";
 import {ParentHorse} from "../dto/parentHorse";
+import {AncestorHorse} from "../dto/ancestorHorse";
 
 const baseUri = environment.backendUrl + '/horses';
 
@@ -27,6 +28,10 @@ export class HorseService {
    */
   getAll(searchParams: HorseSearchParams): Observable<BasicHorse[]> {
     return this.http.get<BasicHorse[]>(baseUri, {params: searchParams as HttpParams});
+  }
+
+  getAncestorTree(maxGeneration: number): Observable<AncestorHorse[]> {
+    return this.http.get<AncestorHorse[]>(baseUri + '/ancestor-tree', {params: {maxGeneration}});
   }
 
   getParentOptions(searchParams: ParentSearchParams): Observable<ParentHorse[]> {
