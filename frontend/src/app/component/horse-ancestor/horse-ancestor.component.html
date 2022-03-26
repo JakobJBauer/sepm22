@@ -1,0 +1,24 @@
+<h1>Ancestor Tree</h1>
+<form #depthForm="ngForm" (ngSubmit)="onSubmit()" class="mb-4 row">
+  <label for="depth">Max. generation depth:</label>
+  <input type="number"
+         class="form-control mb-1"
+         [(ngModel)]="selectedDepth"
+         #depth="ngModel"
+         name="depth"
+         id="depth"
+         min="0"
+         max="10"
+         required
+  >
+  <div [hidden]="depth.valid || depth.pristine" class="alert alert-danger">
+    Enter a number between 0 and 10
+  </div>
+  <input type="submit" [disabled]="!depth.valid || depthForm.pristine" class="btn btn-outline-primary" value="Reload">
+</form>
+
+
+<div class="spinner-border" role="status" *ngIf="spin">
+  <span class="sr-only"></span>
+</div>
+<app-ancestor-node *ngFor="let horse of horses" [horse]="horse"></app-ancestor-node>

@@ -14,6 +14,7 @@ import { HorseCreateComponent } from './component/horse-create/horse-create.comp
 import { HorseFormComponent } from './component/horse-form/horse-form.component';
 import { OwnerCreateComponent } from './component/owner-create/owner-create.component';
 import { OwnerComponent } from './component/owner/owner.component';
+import { HorseAncestorComponent } from './component/horse-ancestor/horse-ancestor.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { OwnerComponent } from './component/owner/owner.component';
     HorseFormComponent,
     OwnerCreateComponent,
     OwnerComponent,
+    HorseAncestorComponent,
   ],
   imports: [
     BrowserModule,
