@@ -14,33 +14,33 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 @Repository
 public class HorseJdbcDao implements HorseDao {
-    private static final String TABLE_NAME = "horse";
-    private final static String JOINED_TABLE = "(SELECT horse.id, name, description, birthdate, sex, parents, ownerId, firstname, lastname, email  FROM (\n" +
-            "        SELECT rs1.id, name, description, birthdate, sex, GROUP_CONCAT(parent SEPARATOR ',') as parents,  ownerId FROM\n" +
-            "        (SELECT id, name, description, birthdate, sex, ownerId, parent FROM HORSE \n" +
-            "        LEFT OUTER JOIN child_of ON horse.id = child_of.child) as rs1\n" +
-            "group by id\n" +
-            ")  as horse\n" +
-            "LEFT JOIN owner on horse.ownerId = owner.id)";
-
+    private static final String TABLE_HORSE = "horse";
+    private static final String TABLE_HORSE_PARENTS = "SELECT id, name, description, birthdate, sex, ARRAY_AGG(parent)[1] as parent1, (CASE WHEN CARDINALITY(ARRAY_AGG(parent)) >= 2 THEN ARRAY_AGG(parent)[2] ELSE null END) as parent2,  ownerId FROM" +
+            " (SELECT id, name, description, birthdate, sex, ownerId, parent FROM " + TABLE_HORSE +
+            " LEFT OUTER JOIN child_of ON horse.id = child_of.child)" +
+            " group by id";
+    private static final String TABLE_HORSE_PARENTS_OWNER = " (SELECT  horse.id, name, description, birthdate, sex, parent1, parent2, ownerId, firstName, lastName, email FROM (" +
+            TABLE_HORSE_PARENTS + ") as horse " +
+            "LEFT JOIN owner ON owner.id = horse.ownerId) ";
     private static final String CHILD_TABLE = "child_of";
     private static final String CHILD_DELETE_BY_CHILD = "DELETE FROM " + CHILD_TABLE + " WHERE child = ?";
     private static final String CHILD_DELETE_BY_ANY = "DELETE FROM " + CHILD_TABLE + " WHERE child = ? OR parent = ?";
     private static final String CHILD_ADD = "INSERT INTO " + CHILD_TABLE + " (child, parent) VALUES (?, ?)";
-    private static final String SQL_SELECT_ALL = "SELECT * FROM " + JOINED_TABLE + " WHERE true";
-    private static final String SQL_SELECT_PARENTS = "SELECT id, name, sex FROM " + TABLE_NAME + " WHERE true";
-    private static final String SQL_SELECT_ONE = "SELECT * FROM " + JOINED_TABLE + " WHERE id = ?";
-    private static final String SQL_CREATE = "INSERT INTO " + TABLE_NAME +
+    private static final String SQL_SELECT_ALL = "SELECT * FROM " + TABLE_HORSE_PARENTS_OWNER + " WHERE true";
+    private static final String SQL_SELECT_PARENTS = "SELECT id, name, sex FROM " + TABLE_HORSE + " WHERE true";
+    private static final String SQL_SELECT_ONE = "SELECT * FROM " + TABLE_HORSE_PARENTS_OWNER + " WHERE id = ?";
+    private static final String SQL_CREATE = "INSERT INTO " + TABLE_HORSE +
             " (name, description, birthdate, sex, ownerId)" +
             "VALUES (?, ?, ?, ?, ?)";
-    private static final String SQL_UPDATE_BY_ID = "UPDATE " + TABLE_NAME +
+    private static final String SQL_UPDATE_BY_ID = "UPDATE " + TABLE_HORSE +
             " SET name = ?, description = ?, birthdate = ?, sex = ?, ownerId = ?" +
             " WHERE id = ?";
-    private static final String SQL_DELETE_BY_ID = "DELETE FROM " + TABLE_NAME + "  WHERE id = ?";
+    private static final String SQL_DELETE_BY_ID = "DELETE FROM " + TABLE_HORSE + "  WHERE id = ?";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -255,6 +255,12 @@ public class HorseJdbcDao implements HorseDao {
         );
     }
 
+                result.getString("name"),
+                result.getDate("birthdate").toLocalDate(),
+                parents
+        );
+    }
+
     private Horse mapRow(ResultSet result, int rownum) throws SQLException {
         Horse horse = new Horse();
         horse.setId(result.getLong("id"));
@@ -270,10 +276,16 @@ public class HorseJdbcDao implements HorseDao {
                     result.getString("email")
             ));
         }
-        if (result.getString("parents") != null) {
-            var parents = Arrays.stream(result.getString("parents").split(",")).map(Long::valueOf);
-            horse.setParentIds(parents.toArray(Long[]::new));
-        }
+
+        var parentIds = new LinkedList<Long>();
+        if (result.getObject("parent1") != null)
+            parentIds.add(result.getLong("parent1"));
+        if (result.getObject("parent2") != null)
+            parentIds.add(result.getLong("parent2"));
+        horse.setParentIds(
+                parentIds.toArray(Long[]::new)
+        );
+
         return horse;
     }
 }
