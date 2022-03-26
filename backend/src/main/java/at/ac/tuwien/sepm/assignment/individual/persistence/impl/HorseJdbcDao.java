@@ -13,19 +13,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 @Repository
 public class HorseJdbcDao implements HorseDao {
     private static final String TABLE_HORSE = "horse";
-    private static final String TABLE_HORSE_PARENTS = "SELECT id, name, description, birthdate, sex, ARRAY_AGG(parent)[1] as parent1, (CASE WHEN CARDINALITY(ARRAY_AGG(parent)) >= 2 THEN ARRAY_AGG(parent)[2] ELSE null END) as parent2,  ownerId FROM" +
+    private static final String TABLE_HORSE_PARENTS = "(SELECT id, name, description, birthdate, sex, ARRAY_AGG(parent)[1] as parent1, (CASE WHEN CARDINALITY(ARRAY_AGG(parent)) >= 2 THEN ARRAY_AGG(parent)[2] ELSE null END) as parent2,  ownerId FROM" +
             " (SELECT id, name, description, birthdate, sex, ownerId, parent FROM " + TABLE_HORSE +
             " LEFT OUTER JOIN child_of ON horse.id = child_of.child)" +
-            " group by id";
-    private static final String TABLE_HORSE_PARENTS_OWNER = " (SELECT  horse.id, name, description, birthdate, sex, parent1, parent2, ownerId, firstName, lastName, email FROM (" +
-            TABLE_HORSE_PARENTS + ") as horse " +
+            " group by id)";
+    private static final String TABLE_HORSE_PARENTS_OWNER = " (SELECT  horse.id, name, description, birthdate, sex, parent1, parent2, ownerId, firstName, lastName, email FROM " +
+            TABLE_HORSE_PARENTS + " as horse " +
             "LEFT JOIN owner ON owner.id = horse.ownerId) ";
     private static final String CHILD_TABLE = "child_of";
     private static final String CHILD_DELETE_BY_CHILD = "DELETE FROM " + CHILD_TABLE + " WHERE child = ?";
@@ -41,6 +40,19 @@ public class HorseJdbcDao implements HorseDao {
             " SET name = ?, description = ?, birthdate = ?, sex = ?, ownerId = ?" +
             " WHERE id = ?";
     private static final String SQL_DELETE_BY_ID = "DELETE FROM " + TABLE_HORSE + "  WHERE id = ?";
+    private static final String SQL_GET_ANCESTOR_TREE = "WITH RECURSIVE ancestor_tree(id, name, birthdate, parent1, parent2, depth) AS (" +
+            " SELECT id, name, birthdate, parent1, parent2, 0 FROM " +
+            TABLE_HORSE_PARENTS +
+            " WHERE id = ?" +
+            " UNION ALL" +
+            " SELECT hp.id, hp.name, hp.birthdate, hp.parent1, hp.parent2, depth + 1 FROM " +
+            TABLE_HORSE_PARENTS + " hp" +
+            " INNER JOIN ancestor_tree ht ON" +
+            " ht.parent1 = hp.id OR ht.parent2 = hp.id" +
+            " WHERE depth < ?" +
+            ")" +
+            " SELECT * FROM ancestor_tree" +
+            " ORDER BY depth DESC";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -114,6 +126,20 @@ public class HorseJdbcDao implements HorseDao {
                     request,
                     this::mapRowSearchHorse,
                     sqlParams.toArray()
+            );
+        } catch (DataAccessException e) {
+            throw new PersistenceException("Could not query all horses", e);
+        }
+    }
+
+    @Override
+    public List<AncestorTreeHorse> getAncestorTree(Integer maxGenerations) {
+        try {
+            return jdbcTemplate.query(
+                    SQL_SELECT_ALL,
+                    (rs, rowNum) -> {
+                        return this.mapRowAncestorHorse(rs, rowNum, maxGenerations);
+                    }
             );
         } catch (DataAccessException e) {
             throw new PersistenceException("Could not query all horses", e);
@@ -255,9 +281,53 @@ public class HorseJdbcDao implements HorseDao {
         );
     }
 
+    private AncestorTreeHorse mapRowAncestorHorse(ResultSet result, int rownum, Integer maxGeneration) throws SQLException {
+        var id = result.getLong("id");
+
+        var wrapper = new Object() {
+            Integer lastDepth = null;
+            List<AncestorTreeHorse> lastDepthHorses = new LinkedList<>();
+            List<AncestorTreeHorse> currentDepthHorses = new LinkedList<>();
+        };
+
+        jdbcTemplate.query(SQL_GET_ANCESTOR_TREE, (rs, rowNum) -> {
+            var currId = rs.getLong("id");
+
+            var currDepth = rs.getInt("depth");
+            if (wrapper.lastDepth == null) wrapper.lastDepth = currDepth;
+            if (wrapper.lastDepth != currDepth) {
+                wrapper.lastDepthHorses = new LinkedList<>(wrapper.currentDepthHorses);
+                wrapper.currentDepthHorses = new LinkedList<>();
+                wrapper.lastDepth = currDepth;
+            }
+
+            var currParents = wrapper.lastDepthHorses.stream().filter((lastHorse) ->
+                    {
+                        try {
+                            return lastHorse.getId() == rs.getObject("parent1") || lastHorse.getId() == rs.getObject("parent2");
+                        } catch (SQLException e) {
+                            throw new PersistenceException("parents could bot be read ", e);
+                        }
+                    }
+            );
+
+            var currentHorse = new AncestorTreeHorse(
+                    currId,
+                    rs.getString("name"),
+                    rs.getDate("birthdate").toLocalDate(),
+                    currParents.toArray(AncestorTreeHorse[]::new)
+            );
+
+            wrapper.currentDepthHorses.add(currentHorse);
+
+            return null;
+        }, id, maxGeneration);
+
+        return new AncestorTreeHorse(
+                id,
                 result.getString("name"),
                 result.getDate("birthdate").toLocalDate(),
-                parents
+                wrapper.lastDepthHorses.toArray(AncestorTreeHorse[]::new)
         );
     }
 
