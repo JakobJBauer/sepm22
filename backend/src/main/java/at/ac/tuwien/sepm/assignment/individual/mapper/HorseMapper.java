@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.assignment.individual.mapper;
 
 import at.ac.tuwien.sepm.assignment.individual.dto.*;
+import at.ac.tuwien.sepm.assignment.individual.entity.AncestorTreeHorse;
 import at.ac.tuwien.sepm.assignment.individual.entity.Horse;
 import at.ac.tuwien.sepm.assignment.individual.entity.SearchHorse;
 import at.ac.tuwien.sepm.assignment.individual.service.HorseService;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Component
 public class HorseMapper {
@@ -40,6 +42,17 @@ public class HorseMapper {
                 horse.getBirthdate(),
                 horse.getSex(),
                 horse.getOwner() != null ? horse.getOwner().getFirstName() + " " + horse.getOwner().getLastName(): null
+        );
+    }
+
+    public AncestorTreeHorseDto entityToDto(AncestorTreeHorse ancestorTreeHorse) {
+        return new AncestorTreeHorseDto(
+                ancestorTreeHorse.getId(),
+                ancestorTreeHorse.getName(),
+                ancestorTreeHorse.getBirthdate(),
+                Stream.of(ancestorTreeHorse.getParents())
+                        .map(this::entityToDto)
+                        .toArray(AncestorTreeHorseDto[]::new)
         );
     }
 
