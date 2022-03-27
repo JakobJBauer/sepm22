@@ -2,10 +2,13 @@ package at.ac.tuwien.sepm.assignment.individual.rest;
 
 import at.ac.tuwien.sepm.assignment.individual.dto.FullOwnerDto;
 import at.ac.tuwien.sepm.assignment.individual.dto.SearchParamsDto;
+import at.ac.tuwien.sepm.assignment.individual.exception.ServiceException;
 import at.ac.tuwien.sepm.assignment.individual.mapper.OwnerMapper;
 import at.ac.tuwien.sepm.assignment.individual.mapper.SearchParamsMapper;
 import at.ac.tuwien.sepm.assignment.individual.service.OwnerService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.stream.Stream;
 
@@ -23,20 +26,30 @@ public class OwnerEndpoint {
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public Stream<FullOwnerDto> getAllOwners(SearchParamsDto searchParamsDto) {
-        return service.getAllOwners(
-            this.searchParamsMapper.dtoToEntity(searchParamsDto)
-        ).stream().map(mapper::entityToFullDto);
+        try {
+            return service.getAllOwners(
+                    this.searchParamsMapper.dtoToEntity(searchParamsDto)
+            ).stream().map(mapper::entityToFullDto);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.OK)
     public FullOwnerDto createOwner(@RequestBody FullOwnerDto fullOwnerDto) {
-        return mapper.entityToFullDto(
-                service.createOwner(
-                        mapper.dtoToEntity(
-                                fullOwnerDto
-                        )
-                )
-        );
+        try {
+            return mapper.entityToFullDto(
+                    service.createOwner(
+                            mapper.dtoToEntity(
+                                    fullOwnerDto
+                            )
+                    )
+            );
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
     }
 }

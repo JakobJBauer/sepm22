@@ -1,9 +1,8 @@
 package at.ac.tuwien.sepm.assignment.individual.rest;
 
 import at.ac.tuwien.sepm.assignment.individual.dto.*;
-import at.ac.tuwien.sepm.assignment.individual.entity.AncestorTreeHorse;
-import at.ac.tuwien.sepm.assignment.individual.entity.ParentSearchParams;
 import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
+import at.ac.tuwien.sepm.assignment.individual.exception.ServiceException;
 import at.ac.tuwien.sepm.assignment.individual.mapper.HorseMapper;
 import at.ac.tuwien.sepm.assignment.individual.mapper.HorseSearchParamsMapper;
 import at.ac.tuwien.sepm.assignment.individual.mapper.SearchParamsMapper;
@@ -30,45 +29,67 @@ public class HorseEndpoint {
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public Stream<BasicHorseOutputDto> allHorses(HorseSearchParamsDto horseSearchParamsDto) {
-        return service.allHorses(searchMapper.dtoToEntity(horseSearchParamsDto)).stream()
-                .map(mapper::entityToBasicDto);
+        try {
+            return service.allHorses(searchMapper.dtoToEntity(horseSearchParamsDto)).stream()
+                    .map(mapper::entityToBasicDto);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
     }
 
     @GetMapping(path = "/parentsearch")
+    @ResponseStatus(HttpStatus.OK)
     public Stream<SearchHorseDto> getParentOptions(ParentSearchParamsDto parentSearchParamsDto) {
-        return service.parentOptions(parentSearchMapper.dtoToEntity(parentSearchParamsDto))
-                .stream().map(mapper::entityToSearchHorseDto);
+        try {
+            return service.parentOptions(parentSearchMapper.dtoToEntity(parentSearchParamsDto))
+                    .stream().map(mapper::entityToSearchHorseDto);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
     }
 
     @GetMapping(path = "/ancestor-tree")
+    @ResponseStatus(HttpStatus.OK)
     public Stream<AncestorTreeHorseDto> getAncestorTree(@RequestParam(value = "maxGeneration", required = false) Integer maxGenerations) {
-        return service.getAncestorTree(maxGenerations).stream().map(mapper::entityToDto);
+        try {
+            return service.getAncestorTree(maxGenerations).stream().map(mapper::entityToDto);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
     }
 
     @GetMapping(path = "/{horseId}")
+    @ResponseStatus(HttpStatus.OK)
     public FullHorseOutputDto getHorseById(@PathVariable("horseId") long horseId) {
         try {
             return mapper.entityToFullDto(service.getHorseById(horseId));
         } catch (NoResultException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "entity not found"
-            );
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public BasicHorseOutputDto createHorse(@RequestBody BasicHorseInputDto basicHorseInputDto) {
-        return mapper.entityToBasicDto(
-                service.createHorse(
-                        mapper.dtoToEntity(
-                                basicHorseInputDto
-                        )
-                )
-        );
+        try {
+            return mapper.entityToBasicDto(
+                    service.createHorse(
+                            mapper.dtoToEntity(
+                                    basicHorseInputDto
+                            )
+                    )
+            );
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
     }
 
     @PutMapping(path = "/{horseId}")
+    @ResponseStatus(HttpStatus.OK)
     public FullHorseOutputDto updateHorse(
             @RequestBody BasicHorseInputDto basicHorseInputDto,
             @PathVariable("horseId") long horseId
@@ -83,22 +104,23 @@ public class HorseEndpoint {
                     )
             );
         } catch (NoResultException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "entity not found", e
-            );
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
 
-    @DeleteMapping(path="/{horseId}")
+    @DeleteMapping(path = "/{horseId}")
+    @ResponseStatus(HttpStatus.OK)
     public void deleteHorseById(
             @PathVariable("horseId") long horseId
     ) {
         try {
             service.deleteHorseById(horseId);
         } catch (NoResultException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "entity not found", e
-            );
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
 }
