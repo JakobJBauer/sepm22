@@ -1,6 +1,9 @@
 package at.ac.tuwien.sepm.assignment.individual.service.impl;
 
 import at.ac.tuwien.sepm.assignment.individual.entity.*;
+import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
+import at.ac.tuwien.sepm.assignment.individual.exception.PersistenceException;
+import at.ac.tuwien.sepm.assignment.individual.exception.ServiceException;
 import at.ac.tuwien.sepm.assignment.individual.persistence.HorseDao;
 import at.ac.tuwien.sepm.assignment.individual.service.HorseService;
 import org.springframework.stereotype.Service;
@@ -17,38 +20,66 @@ public class HorseServiceImpl implements HorseService {
 
     @Override
     public List<Horse> allHorses(HorseSearchParams horseSearchParams) {
-        return dao.getAll(horseSearchParams);
+        try {
+            return dao.getAll(horseSearchParams);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
     }
 
     @Override
     public List<SearchHorse> parentOptions(ParentSearchParams parentSearchParams) {
-        return dao.parentOptions(parentSearchParams);
+        try {
+            return dao.parentOptions(parentSearchParams);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
     }
 
     @Override
     public List<AncestorTreeHorse> getAncestorTree(Integer maxGenerations) {
         if (maxGenerations == null) maxGenerations = 5;
-        return dao.getAncestorTree(maxGenerations);
+        try {
+            return dao.getAncestorTree(maxGenerations);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
     }
 
     @Override
     public Horse getHorseById(Long id) {
         if (id == null) return null;
-        return dao.getHorseById(id);
+        try {
+            return dao.getHorseById(id);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
     }
 
     @Override
     public Horse createHorse(Horse horse) {
-        return dao.createHorse(horse);
+        try {
+            return dao.createHorse(horse);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
     }
 
     @Override
     public Horse updateHorse(Horse horse) {
-        return dao.updateHorse(horse);
+        try {
+            return dao.updateHorse(horse);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
     }
 
     @Override
     public void deleteHorseById(Long id) {
-        dao.deleteHorseById(id);
+        try {
+            dao.deleteHorseById(id);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
     }
 }
