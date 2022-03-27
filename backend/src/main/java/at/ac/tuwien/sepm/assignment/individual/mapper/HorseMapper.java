@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.assignment.individual.dto.*;
 import at.ac.tuwien.sepm.assignment.individual.entity.AncestorTreeHorse;
 import at.ac.tuwien.sepm.assignment.individual.entity.Horse;
 import at.ac.tuwien.sepm.assignment.individual.entity.SearchHorse;
+import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
 import at.ac.tuwien.sepm.assignment.individual.service.HorseService;
 import at.ac.tuwien.sepm.assignment.individual.service.OwnerService;
 import org.springframework.stereotype.Component;
@@ -41,7 +42,7 @@ public class HorseMapper {
                 horse.getDescription(),
                 horse.getBirthdate(),
                 horse.getSex(),
-                horse.getOwner() != null ? horse.getOwner().getFirstName() + " " + horse.getOwner().getLastName(): null
+                horse.getOwner() != null ? horse.getOwner().getFirstName() + " " + horse.getOwner().getLastName() : null
         );
     }
 
@@ -76,26 +77,49 @@ public class HorseMapper {
     }
 
     public Horse dtoToEntity(BasicHorseInputDto basicHorseInputDto, long id) {
-        return new Horse(
-                id,
-                basicHorseInputDto.name(),
-                basicHorseInputDto.description(),
-                basicHorseInputDto.birthdate(),
-                basicHorseInputDto.sex(),
-                ownerService.getOwnerById(basicHorseInputDto.ownerId()),
-                basicHorseInputDto.parentIds()
-        );
+        try {
+            return new Horse(
+                    id,
+                    basicHorseInputDto.name(),
+                    basicHorseInputDto.description(),
+                    basicHorseInputDto.birthdate(),
+                    basicHorseInputDto.sex(),
+                    ownerService.getOwnerById(basicHorseInputDto.ownerId()),
+                    basicHorseInputDto.parentIds()
+            );
+        } catch (NoResultException e) {
+            return new Horse(
+                    id,
+                    basicHorseInputDto.name(),
+                    basicHorseInputDto.description(),
+                    basicHorseInputDto.birthdate(),
+                    basicHorseInputDto.sex(),
+                    null,
+                    basicHorseInputDto.parentIds()
+            );
+        }
     }
 
     public Horse dtoToEntity(BasicHorseInputDto basicHorseInputDto) {
-        return new Horse(
-                basicHorseInputDto.name(),
-                basicHorseInputDto.description(),
-                basicHorseInputDto.birthdate(),
-                basicHorseInputDto.sex(),
-                ownerService.getOwnerById(basicHorseInputDto.ownerId()),
-                basicHorseInputDto.parentIds()
-        );
+        try {
+            return new Horse(
+                    basicHorseInputDto.name(),
+                    basicHorseInputDto.description(),
+                    basicHorseInputDto.birthdate(),
+                    basicHorseInputDto.sex(),
+                    ownerService.getOwnerById(basicHorseInputDto.ownerId()),
+                    basicHorseInputDto.parentIds()
+            );
+        } catch (NoResultException e) {
+            return new Horse(
+                    basicHorseInputDto.name(),
+                    basicHorseInputDto.description(),
+                    basicHorseInputDto.birthdate(),
+                    basicHorseInputDto.sex(),
+                    null,
+                    basicHorseInputDto.parentIds()
+            );
+        }
     }
 
     private MinimalHorseDto entityToMinimalDto(Horse horse) {
