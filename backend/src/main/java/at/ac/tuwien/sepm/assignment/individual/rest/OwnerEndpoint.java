@@ -39,8 +39,10 @@ public class OwnerEndpoint {
                     this.searchParamsMapper.dtoToEntity(searchParamsDto)
             ).stream().map(mapper::entityToFullDto);
         } catch (ValidationException e) {
+            LOGGER.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         } catch (ServiceException e) {
+            LOGGER.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -58,8 +60,10 @@ public class OwnerEndpoint {
                     )
             );
         } catch (ValidationException e) {
+            LOGGER.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage(), e);
         } catch (ServiceException e) {
+            LOGGER.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
