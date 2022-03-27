@@ -7,15 +7,17 @@ import at.ac.tuwien.sepm.assignment.individual.entity.SearchHorse;
 import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
 import at.ac.tuwien.sepm.assignment.individual.service.HorseService;
 import at.ac.tuwien.sepm.assignment.individual.service.OwnerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Stream;
 
 @Component
 public class HorseMapper {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HorseMapper.class);
 
     private final OwnerMapper ownerMapper;
     private final OwnerService ownerService;
@@ -32,10 +34,12 @@ public class HorseMapper {
     }
 
     public SearchHorseDto entityToSearchHorseDto(SearchHorse searchHorse) {
+        LOGGER.trace("Mapping SearchHorse to SearchHorseDto");
         return new SearchHorseDto(searchHorse.getId(), searchHorse.getName(), searchHorse.getSex());
     }
 
     public BasicHorseOutputDto entityToBasicDto(Horse horse) {
+        LOGGER.trace("Mapping Horse to BasicHorseOutputDto");
         return new BasicHorseOutputDto(
                 horse.getId(),
                 horse.getName(),
@@ -47,6 +51,7 @@ public class HorseMapper {
     }
 
     public AncestorTreeHorseDto entityToDto(AncestorTreeHorse ancestorTreeHorse) {
+        LOGGER.trace("Mapping AncestorTreeHorse to AncestorTreeHorseDto");
         return new AncestorTreeHorseDto(
                 ancestorTreeHorse.getId(),
                 ancestorTreeHorse.getName(),
@@ -58,6 +63,7 @@ public class HorseMapper {
     }
 
     public FullHorseOutputDto entityToFullDto(Horse horse) {
+        LOGGER.trace("Mapping Horse to FullHorseOutputDto");
         var parents = horse.getParentIds() != null ?
                 Arrays.stream(horse.getParentIds())
                         .map(horseService::getHorseById)
@@ -77,6 +83,7 @@ public class HorseMapper {
     }
 
     public Horse dtoToEntity(BasicHorseInputDto basicHorseInputDto, long id) {
+        LOGGER.trace("Mapping BasicHorseInputDto to Horse");
         try {
             return new Horse(
                     id,
@@ -88,6 +95,7 @@ public class HorseMapper {
                     basicHorseInputDto.parentIds()
             );
         } catch (NoResultException e) {
+            LOGGER.debug("No parents in InputDto");
             return new Horse(
                     id,
                     basicHorseInputDto.name(),
@@ -101,6 +109,7 @@ public class HorseMapper {
     }
 
     public Horse dtoToEntity(BasicHorseInputDto basicHorseInputDto) {
+        LOGGER.trace("Mapping BasicHorseInputDto to Horse");
         try {
             return new Horse(
                     basicHorseInputDto.name(),
@@ -111,6 +120,7 @@ public class HorseMapper {
                     basicHorseInputDto.parentIds()
             );
         } catch (NoResultException e) {
+            LOGGER.debug("No parents in InputDto");
             return new Horse(
                     basicHorseInputDto.name(),
                     basicHorseInputDto.description(),
@@ -123,6 +133,7 @@ public class HorseMapper {
     }
 
     private MinimalHorseDto entityToMinimalDto(Horse horse) {
+        LOGGER.trace("Mapping Horse to MinimalHorseDto");
         return new MinimalHorseDto(
                 horse.getId(),
                 horse.getName(),

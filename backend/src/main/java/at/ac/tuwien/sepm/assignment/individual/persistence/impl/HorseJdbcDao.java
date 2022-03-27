@@ -4,6 +4,8 @@ import at.ac.tuwien.sepm.assignment.individual.entity.*;
 import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
 import at.ac.tuwien.sepm.assignment.individual.exception.PersistenceException;
 import at.ac.tuwien.sepm.assignment.individual.persistence.HorseDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -18,6 +20,8 @@ import java.util.List;
 
 @Repository
 public class HorseJdbcDao implements HorseDao {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HorseJdbcDao.class);
+
     private static final String TABLE_HORSE = "horse";
     private static final String TABLE_HORSE_PARENTS = "(SELECT id, name, description, birthdate, sex, ARRAY_AGG(parent)[1] as parent1, (CASE WHEN CARDINALITY(ARRAY_AGG(parent)) >= 2 THEN ARRAY_AGG(parent)[2] ELSE null END) as parent2,  ownerId FROM" +
             " (SELECT id, name, description, birthdate, sex, ownerId, parent FROM " + TABLE_HORSE +
@@ -63,6 +67,7 @@ public class HorseJdbcDao implements HorseDao {
 
     @Override
     public List<Horse> getAll(HorseSearchParams horseSearchParams) {
+        LOGGER.trace("getAll({})", horseSearchParams);
         String sqlRequest = SQL_SELECT_ALL;
         ArrayList<Object> sqlParams = new ArrayList<>();
 
@@ -104,6 +109,7 @@ public class HorseJdbcDao implements HorseDao {
 
     @Override
     public List<SearchHorse> parentOptions(ParentSearchParams parentSearchParams) {
+        LOGGER.trace("parentOptions({})", parentSearchParams);
         String request = SQL_SELECT_PARENTS;
         ArrayList<Object> sqlParams = new ArrayList<>();
 
@@ -135,6 +141,7 @@ public class HorseJdbcDao implements HorseDao {
 
     @Override
     public List<AncestorTreeHorse> getAncestorTree(Integer maxGenerations) {
+        LOGGER.trace("getAncestorTree({})", maxGenerations);
         try {
             return jdbcTemplate.query(
                     SQL_SELECT_ALL,
@@ -147,6 +154,7 @@ public class HorseJdbcDao implements HorseDao {
 
     @Override
     public Horse getHorseById(Long id) {
+        LOGGER.trace("getHorseById({})", id);
         try {
             var horses = jdbcTemplate.query(SQL_SELECT_ONE, this::mapRow, id);
 
@@ -162,6 +170,7 @@ public class HorseJdbcDao implements HorseDao {
     @Override
     @Transactional
     public Horse createHorse(Horse horse) {
+        LOGGER.trace("createHorse({})", horse);
         try {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
@@ -184,6 +193,7 @@ public class HorseJdbcDao implements HorseDao {
     @Override
     @Transactional
     public Horse updateHorse(Horse horse) {
+        LOGGER.trace("updateHorse({})", horse);
         try {
             var entityId = jdbcTemplate.update(connection -> {
                 PreparedStatement stmt = connection.prepareStatement(SQL_UPDATE_BY_ID);
@@ -210,6 +220,7 @@ public class HorseJdbcDao implements HorseDao {
 
     @Override
     public boolean hasCriticalSex(Horse horse) {
+        LOGGER.trace("hasCriticalSex({})", horse);
         try {
             var parentCriticals = jdbcTemplate.query(
                     SQL_PARENT_COUNT,
@@ -226,6 +237,7 @@ public class HorseJdbcDao implements HorseDao {
     }
 
     private void setRequestParams(Horse horse, PreparedStatement stmt) throws SQLException {
+        LOGGER.trace("setRequestParams({})", horse);
         stmt.setString(1, horse.getName());
         stmt.setString(2, horse.getDescription());
         stmt.setDate(3, Date.valueOf(horse.getBirthdate()));
@@ -236,6 +248,7 @@ public class HorseJdbcDao implements HorseDao {
     @Override
     @Transactional
     public void deleteHorseById(Long id) {
+        LOGGER.trace("deleteHorseById({})", id);
         this.removeHorseRelations(id);
         try {
             var deletedHorseId = jdbcTemplate.update(connection -> {
@@ -251,6 +264,7 @@ public class HorseJdbcDao implements HorseDao {
     }
 
     private void removeHorseRelations(Long horseId) {
+        LOGGER.trace("removeHorsRelations({})", horseId);
         try {
             jdbcTemplate.update(connection -> {
                 PreparedStatement pstmt = connection.prepareStatement(CHILD_DELETE_BY_ANY);
@@ -264,6 +278,7 @@ public class HorseJdbcDao implements HorseDao {
     }
 
     private void removeParentHorses(Long horseId) {
+        LOGGER.trace("removeParentHorses({})", horseId);
         try {
             jdbcTemplate.update(connection -> {
                 PreparedStatement pstmt = connection.prepareStatement(CHILD_DELETE_BY_CHILD);
@@ -276,6 +291,7 @@ public class HorseJdbcDao implements HorseDao {
     }
 
     private void addParentHorse(Long horseId, Long parentHorseId) {
+        LOGGER.trace("addParentHorse({}, {})", horseId, parentHorseId);
         if (parentHorseId == null) return;
         try {
             jdbcTemplate.update(connection -> {
@@ -290,6 +306,7 @@ public class HorseJdbcDao implements HorseDao {
     }
 
     private SearchHorse mapRowSearchHorse(ResultSet result, int rownum) throws SQLException {
+        LOGGER.trace("mapRowSearchHorse()");
         return new SearchHorse(
                 result.getLong("id"),
                 result.getString("name"),
@@ -298,6 +315,7 @@ public class HorseJdbcDao implements HorseDao {
     }
 
     private AncestorTreeHorse mapRowAncestorHorse(ResultSet result, int rownum, Integer maxGeneration) throws SQLException {
+        LOGGER.trace("mapRowAncestorHorse()");
         var id = result.getLong("id");
 
         var wrapper = new Object() {
@@ -348,6 +366,7 @@ public class HorseJdbcDao implements HorseDao {
     }
 
     private Horse mapRow(ResultSet result, int rownum) throws SQLException {
+        LOGGER.trace("mapRow()");
         Horse horse = new Horse();
         horse.setId(result.getLong("id"));
         horse.setName(result.getString("name"));

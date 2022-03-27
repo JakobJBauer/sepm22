@@ -7,12 +7,16 @@ import at.ac.tuwien.sepm.assignment.individual.exception.ServiceException;
 import at.ac.tuwien.sepm.assignment.individual.persistence.OwnerDao;
 import at.ac.tuwien.sepm.assignment.individual.service.OwnerService;
 import at.ac.tuwien.sepm.assignment.individual.validator.Validator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class OwnerServiceImpl implements OwnerService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OwnerServiceImpl.class);
+
     private final OwnerDao dao;
     private final Validator validator;
 
@@ -23,6 +27,7 @@ public class OwnerServiceImpl implements OwnerService {
 
     @Override
     public List<Owner> getAllOwners(OwnerSearchParams ownerSearchParams) {
+        LOGGER.trace("getAllOwners({})", ownerSearchParams);
         validator.ownerSearchParamsValidation(ownerSearchParams);
         try {
             return dao.getAllOwners(ownerSearchParams);
@@ -33,6 +38,7 @@ public class OwnerServiceImpl implements OwnerService {
 
     @Override
     public Owner getOwnerById(Long id) {
+        LOGGER.trace("getOwnerById({})", id);
         validator.idValidation(id);
 
         try {
@@ -44,6 +50,7 @@ public class OwnerServiceImpl implements OwnerService {
 
     @Override
     public Owner createOwner(Owner owner) {
+        LOGGER.trace("createOwner({})", owner);
         validator.ownerValidation(owner);
         try {
             return dao.createOwner(owner);

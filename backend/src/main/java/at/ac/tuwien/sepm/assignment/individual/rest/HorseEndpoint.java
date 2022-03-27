@@ -9,6 +9,8 @@ import at.ac.tuwien.sepm.assignment.individual.mapper.HorseMapper;
 import at.ac.tuwien.sepm.assignment.individual.mapper.HorseSearchParamsMapper;
 import at.ac.tuwien.sepm.assignment.individual.mapper.SearchParamsMapper;
 import at.ac.tuwien.sepm.assignment.individual.service.HorseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,6 +20,8 @@ import java.util.stream.Stream;
 @RestController
 @RequestMapping(path = "/horses")
 public class HorseEndpoint {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HorseEndpoint.class);
+
     private final HorseService service;
     private final HorseMapper mapper;
     private final HorseSearchParamsMapper searchMapper;
@@ -33,6 +37,7 @@ public class HorseEndpoint {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Stream<BasicHorseOutputDto> allHorses(HorseSearchParamsDto horseSearchParamsDto) {
+        LOGGER.info("GET Request on '/horses' with Params {}", horseSearchParamsDto);
         try {
             return service.allHorses(searchMapper.dtoToEntity(horseSearchParamsDto)).stream()
                     .map(mapper::entityToBasicDto);
@@ -46,6 +51,7 @@ public class HorseEndpoint {
     @GetMapping(path = "/parentsearch")
     @ResponseStatus(HttpStatus.OK)
     public Stream<SearchHorseDto> getParentOptions(ParentSearchParamsDto parentSearchParamsDto) {
+        LOGGER.info("GET Request on '/horses/parentsearch' with Params {}", parentSearchParamsDto);
         try {
             return service.parentOptions(parentSearchMapper.dtoToEntity(parentSearchParamsDto))
                     .stream().map(mapper::entityToSearchHorseDto);
@@ -59,6 +65,7 @@ public class HorseEndpoint {
     @GetMapping(path = "/ancestor-tree")
     @ResponseStatus(HttpStatus.OK)
     public Stream<AncestorTreeHorseDto> getAncestorTree(@RequestParam(value = "maxGeneration", required = false) Integer maxGenerations) {
+        LOGGER.info("GET Request on '/horses/ancestor-tree' with Params {}", maxGenerations);
         try {
             return service.getAncestorTree(maxGenerations).stream().map(mapper::entityToDto);
         } catch (ValidationException e) {
@@ -71,6 +78,7 @@ public class HorseEndpoint {
     @GetMapping(path = "/{horseId}")
     @ResponseStatus(HttpStatus.OK)
     public FullHorseOutputDto getHorseById(@PathVariable("horseId") long horseId) {
+        LOGGER.info("GET Request on '/horses/{}'", horseId);
         try {
             return mapper.entityToFullDto(service.getHorseById(horseId));
         } catch (NoResultException e) {
@@ -85,6 +93,7 @@ public class HorseEndpoint {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BasicHorseOutputDto createHorse(@RequestBody BasicHorseInputDto basicHorseInputDto) {
+        LOGGER.info("POST Request on '/horses' with Body {}", basicHorseInputDto);
         try {
             return mapper.entityToBasicDto(
                     service.createHorse(
@@ -108,6 +117,7 @@ public class HorseEndpoint {
             @RequestBody BasicHorseInputDto basicHorseInputDto,
             @PathVariable("horseId") long horseId
     ) {
+        LOGGER.info("PUT Request on '/horses/{}' with Body {}", horseId, basicHorseInputDto);
         try {
             return mapper.entityToFullDto(
                     service.updateHorse(
@@ -133,6 +143,7 @@ public class HorseEndpoint {
     public void deleteHorseById(
             @PathVariable("horseId") long horseId
     ) {
+        LOGGER.info("DELETE Request on '/horses/{}'", horseId);
         try {
             service.deleteHorseById(horseId);
         } catch (NoResultException e) {

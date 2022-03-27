@@ -1,9 +1,9 @@
 package at.ac.tuwien.sepm.assignment.individual.validator;
 
 import at.ac.tuwien.sepm.assignment.individual.entity.*;
-import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
 import at.ac.tuwien.sepm.assignment.individual.exception.ValidationException;
-import at.ac.tuwien.sepm.assignment.individual.service.HorseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -11,7 +11,10 @@ import java.util.regex.Pattern;
 
 @Component
 public class Validator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Validator.class);
+
     public void horseSearchParamsValidation(HorseSearchParams horseSearchParams) {
+        LOGGER.trace("horseSearchParamsValidation({})", horseSearchParams);
         if (horseSearchParams.getName() != null && horseSearchParams.getName().length() > 255)
             failValidation("Name of horse is to long. Limit is 255 chars");
 
@@ -29,6 +32,7 @@ public class Validator {
     }
 
     public void ownerSearchParamsValidation(OwnerSearchParams ownerSearchParams) {
+        LOGGER.trace("ownerSearchParamsValidation({})", ownerSearchParams);
         if (ownerSearchParams.getSearchTerm() != null) {
             if (ownerSearchParams.getSearchTerm().length() > 255)
                 failValidation("searchTerm is to long. Limit is 255 chars");
@@ -41,6 +45,7 @@ public class Validator {
     }
 
     public void parentSearchParamsValidation(ParentSearchParams parentSearchParams) {
+        LOGGER.trace("parentSearchParamsValidation({})", parentSearchParams);
         ownerSearchParamsValidation(
                 new OwnerSearchParams(
                         parentSearchParams.getSearchTerm(),
@@ -55,6 +60,7 @@ public class Validator {
     }
 
     public void ancestorTreeMaxGenerationValidation(Integer maxGeneration) {
+        LOGGER.trace("ancestorTreeMaxGenerationValidation({})", maxGeneration);
         if (maxGeneration != null) {
             if (maxGeneration < 0)
                 failValidation("maxGeneration must be positive");
@@ -64,11 +70,13 @@ public class Validator {
     }
 
     public void idValidation(Long id) {
+        LOGGER.trace("idValidation({})", id);
         if (id == null)
             failValidation("id cannot be null");
     }
 
     public void horseValidation(Horse horse) {
+        LOGGER.trace("horseValidation({})", horse);
         if (horse.getName() == null || horse.getName().isBlank())
             failValidation("Name of horse is not defined");
 
@@ -107,6 +115,7 @@ public class Validator {
     }
 
     public void ownerValidation(Owner owner) {
+        LOGGER.trace("ownerValidation({})", owner);
         if (owner.getFirstName() == null || owner.getFirstName().isBlank())
             failValidation("firstName must be set");
 
@@ -129,6 +138,7 @@ public class Validator {
     }
 
     private void failValidation(String errorMsg) {
+        LOGGER.trace("Throwing new Validationexception({})", errorMsg);
         throw new ValidationException(errorMsg);
     }
 }

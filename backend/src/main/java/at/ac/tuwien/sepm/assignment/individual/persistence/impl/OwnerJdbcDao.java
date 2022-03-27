@@ -5,6 +5,8 @@ import at.ac.tuwien.sepm.assignment.individual.entity.OwnerSearchParams;
 import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
 import at.ac.tuwien.sepm.assignment.individual.exception.PersistenceException;
 import at.ac.tuwien.sepm.assignment.individual.persistence.OwnerDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -20,6 +22,7 @@ import java.util.List;
 
 @Repository
 public class OwnerJdbcDao implements OwnerDao {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OwnerJdbcDao.class);
 
     private JdbcTemplate jdbcTemplate;
 
@@ -35,6 +38,7 @@ public class OwnerJdbcDao implements OwnerDao {
 
     @Override
     public List<Owner> getAllOwners(OwnerSearchParams ownerSearchParams) {
+        LOGGER.trace("getAllOwners({})", ownerSearchParams);
         String request = SQL_GET_ALL;
         ArrayList<Object> sqlParams = new ArrayList<>();
 
@@ -65,6 +69,7 @@ public class OwnerJdbcDao implements OwnerDao {
 
     @Override
     public Owner createOwner(Owner owner) {
+        LOGGER.trace("createOwner({})", owner);
         try {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
@@ -85,6 +90,7 @@ public class OwnerJdbcDao implements OwnerDao {
 
     @Override
     public Owner getOwnerById(Long id) {
+        LOGGER.trace("getOwnerById({})", id);
         try {
             var owners = jdbcTemplate.query(SQL_SELECT_ONE, this::mapRow, id);
 
@@ -98,6 +104,7 @@ public class OwnerJdbcDao implements OwnerDao {
     }
 
     private Owner mapRow(ResultSet result, int rownum) throws SQLException {
+        LOGGER.trace("mapRow()");
         Owner owner = new Owner();
         owner.setId(result.getLong("id"));
         owner.setFirstName(result.getString("firstName"));
