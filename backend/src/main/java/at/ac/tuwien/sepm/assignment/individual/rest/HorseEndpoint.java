@@ -1,8 +1,10 @@
 package at.ac.tuwien.sepm.assignment.individual.rest;
 
 import at.ac.tuwien.sepm.assignment.individual.dto.*;
+import at.ac.tuwien.sepm.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
 import at.ac.tuwien.sepm.assignment.individual.exception.ServiceException;
+import at.ac.tuwien.sepm.assignment.individual.exception.ValidationException;
 import at.ac.tuwien.sepm.assignment.individual.mapper.HorseMapper;
 import at.ac.tuwien.sepm.assignment.individual.mapper.HorseSearchParamsMapper;
 import at.ac.tuwien.sepm.assignment.individual.mapper.SearchParamsMapper;
@@ -34,6 +36,8 @@ public class HorseEndpoint {
         try {
             return service.allHorses(searchMapper.dtoToEntity(horseSearchParamsDto)).stream()
                     .map(mapper::entityToBasicDto);
+        } catch (ValidationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
@@ -45,6 +49,8 @@ public class HorseEndpoint {
         try {
             return service.parentOptions(parentSearchMapper.dtoToEntity(parentSearchParamsDto))
                     .stream().map(mapper::entityToSearchHorseDto);
+        } catch (ValidationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
@@ -55,6 +61,8 @@ public class HorseEndpoint {
     public Stream<AncestorTreeHorseDto> getAncestorTree(@RequestParam(value = "maxGeneration", required = false) Integer maxGenerations) {
         try {
             return service.getAncestorTree(maxGenerations).stream().map(mapper::entityToDto);
+        } catch (ValidationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
@@ -67,6 +75,8 @@ public class HorseEndpoint {
             return mapper.entityToFullDto(service.getHorseById(horseId));
         } catch (NoResultException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        } catch (ValidationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
@@ -83,6 +93,10 @@ public class HorseEndpoint {
                             )
                     )
             );
+        } catch (ValidationException e) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage(), e);
+        } catch (ConflictException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage(), e);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
@@ -105,6 +119,10 @@ public class HorseEndpoint {
             );
         } catch (NoResultException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        } catch (ConflictException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage(), e);
+        } catch (ValidationException e) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage(), e);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
@@ -119,6 +137,8 @@ public class HorseEndpoint {
             service.deleteHorseById(horseId);
         } catch (NoResultException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        } catch (ValidationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }

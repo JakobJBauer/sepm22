@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.assignment.individual.rest;
 import at.ac.tuwien.sepm.assignment.individual.dto.FullOwnerDto;
 import at.ac.tuwien.sepm.assignment.individual.dto.SearchParamsDto;
 import at.ac.tuwien.sepm.assignment.individual.exception.ServiceException;
+import at.ac.tuwien.sepm.assignment.individual.exception.ValidationException;
 import at.ac.tuwien.sepm.assignment.individual.mapper.OwnerMapper;
 import at.ac.tuwien.sepm.assignment.individual.mapper.SearchParamsMapper;
 import at.ac.tuwien.sepm.assignment.individual.service.OwnerService;
@@ -32,6 +33,8 @@ public class OwnerEndpoint {
             return service.getAllOwners(
                     this.searchParamsMapper.dtoToEntity(searchParamsDto)
             ).stream().map(mapper::entityToFullDto);
+        } catch (ValidationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
@@ -48,6 +51,8 @@ public class OwnerEndpoint {
                             )
                     )
             );
+        } catch (ValidationException e) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage(), e);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
