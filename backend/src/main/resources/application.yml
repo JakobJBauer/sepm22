@@ -3,7 +3,8 @@ logging:
     root: INFO
     at:
       ac:
-        tuwien: DEBUG
+        tuwien:
+          sepm: DEBUG
   file:
     name: ./log/wendys-friends.log
 spring:
