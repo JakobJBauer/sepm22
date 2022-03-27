@@ -64,6 +64,8 @@ public class HorseServiceImpl implements HorseService {
     @Override
     public Horse createHorse(Horse horse) {
         validator.horseValidation(horse);
+        validateParent(horse);
+
         try {
             return dao.createHorse(horse);
         } catch (PersistenceException e) {
@@ -74,6 +76,8 @@ public class HorseServiceImpl implements HorseService {
     @Override
     public Horse updateHorse(Horse horse) {
         validator.horseValidation(horse);
+        validateParent(horse);
+
         try {
             if (dao.hasCriticalSex(horse) && dao.getHorseById(horse.getId()).getSex() != horse.getSex())
                 throw new ConflictException("horse is in an parent relationship not allowing sex changes");
@@ -92,5 +96,34 @@ public class HorseServiceImpl implements HorseService {
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage(), e);
         }
+    }
+
+    private void validateParent(Horse horse) {
+        var parents = getParents(horse);
+        validateParentAge(horse, parents);
+        validateParentSex(parents);
+    }
+
+    private void validateParentAge(Horse horse, Horse[] parents) {
+        for (Horse parent : parents) {
+            if (!parent.getBirthdate().isBefore(horse.getBirthdate()))
+                throw new ValidationException("at least one parent is younger than child");
+        }
+    }
+
+    private void validateParentSex(Horse[] parents) {
+        if (parents.length > 2)
+            throw new ValidationException("only a maximum of two parents are allowed");
+        if (parents.length == 2 && parents[0].getSex() == parents[1].getSex())
+            throw new ConflictException("parents can not have same sex");
+    }
+
+    private Horse[] getParents(Horse horse) {
+        if (horse.getParentIds() == null) {
+            horse.setParentIds(new Long[0]);
+            return new Horse[0];
+        }
+
+        return Arrays.stream(horse.getParentIds()).map(this::getHorseById).toArray(Horse[]::new);
     }
 }
