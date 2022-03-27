@@ -6,13 +6,13 @@
       <p class="card-text">{{horse.description}}</p>
     </div>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item">Owner: {{horse.ownerName}}</li>
+      <li class="list-group-item">Owner: {{ horse.owner ? horse.owner.firstName + ' ' + horse.owner.lastName : 'None'}}</li>
       <li class="list-group-item">Birthdate: {{horse.birthdate}}</li>
       <li class="list-group-item">Sex: {{horse.sex.toLowerCase()}}</li>
     </ul>
     <div class="card-body">
-      <a [routerLink]="" class="card-link">Father</a>
-      <a [routerLink]="" class="card-link">Mother</a>
+      <a *ngIf="getParentBySex('MALE'); else noFather" [routerLink]="'/horses/' + getParentIdBySex('MALE') + '/details'" class="card-link">Father: {{getParentNameBySex('MALE')}}</a>
+      <a *ngIf="getParentBySex('FEMALE'); else noMother" [routerLink]="'/horses/' + getParentIdBySex('FEMALE') + '/details'" class="card-link">Mother: {{getParentNameBySex('FEMALE')}}</a>
     </div>
   </div>
 
@@ -40,3 +40,11 @@
 <div class="alert alert-danger" *ngIf="error">
   {{error}}
 </div>
+
+<ng-template #noFather>
+  <span class="card-text me-3">No Father</span>
+</ng-template>
+
+<ng-template #noMother class="card-text">
+  <span class="card-text ms-4">No Mother</span>
+</ng-template>

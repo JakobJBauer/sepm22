@@ -3,6 +3,7 @@ import {BasicHorse} from '../../dto/basicHorse';
 import {ActivatedRoute, Router} from '@angular/router';
 import {HorseService} from '../../service/horse.service';
 import {Sex} from "../../types/sex";
+import {FullHorse, ParentHorse} from "../../dto/fullHorse";
 
 @Component({
   selector: 'app-horse-details',
@@ -11,7 +12,7 @@ import {Sex} from "../../types/sex";
 })
 export class HorseDetailsComponent implements OnInit {
 
-  horse: BasicHorse;
+  horse: FullHorse;
   error?: string;
 
   constructor(
@@ -23,16 +24,7 @@ export class HorseDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.service.getById(params.id).subscribe({
-        next: horse => {
-          this.horse = {
-            id: horse.id,
-            name: horse.name,
-            description: horse.description,
-            birthdate: horse.birthdate,
-            sex: horse.sex,
-            ownerName: horse.owner && horse.owner.firstName + ' ' + horse.owner.lastName
-          } as BasicHorse;
-        },
+        next: horse => this.horse = horse,
         error: error => {
           this.showError('Could not load horse\n' + error.message, 0);
         }
@@ -49,6 +41,18 @@ export class HorseDetailsComponent implements OnInit {
         this.showError('Could not delete horse\n' + error.message);
       }
     });
+  }
+
+  getParentIdBySex(sex: Sex): number {
+    return this.getParentBySex(sex).id;
+  }
+
+  getParentNameBySex(sex: Sex): string {
+    return this.getParentBySex(sex).name;
+  }
+
+  getParentBySex(sex: Sex): ParentHorse {
+    return this.horse.parents.filter(parent => parent.sex === sex)[0];
   }
 
   private showError(error: string, timeout: number = 10000): void {
