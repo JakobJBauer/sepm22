@@ -1,6 +1,9 @@
 logging:
   level:
     root: INFO
+    at:
+      ac:
+        tuwien: DEBUG
   file:
     name: ./log/wendys-friends.log
 spring:
