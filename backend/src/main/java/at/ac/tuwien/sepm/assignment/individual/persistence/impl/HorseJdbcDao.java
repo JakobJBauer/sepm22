@@ -33,6 +33,7 @@ public class HorseJdbcDao implements HorseDao {
     private static final String SQL_SELECT_ALL = "SELECT * FROM " + TABLE_HORSE_PARENTS_OWNER + " WHERE true";
     private static final String SQL_SELECT_PARENTS = "SELECT id, name, sex FROM " + TABLE_HORSE + " WHERE true";
     private static final String SQL_SELECT_ONE = "SELECT * FROM " + TABLE_HORSE_PARENTS_OWNER + " WHERE id = ?";
+    private static final String SQL_PARENT_COUNT = "SELECT COUNT(parent) as parentCnt FROM " + CHILD_TABLE + " WHERE child IN (SELECT child FROM child_of where parent = ?) GROUP BY child";
     private static final String SQL_CREATE = "INSERT INTO " + TABLE_HORSE +
             " (name, description, birthdate, sex, ownerId)" +
             "VALUES (?, ?, ?, ?, ?)";
@@ -205,6 +206,23 @@ public class HorseJdbcDao implements HorseDao {
             addParentHorse(horse.getId(), parent);
 
         return horse;
+    }
+
+    @Override
+    public boolean hasCriticalSex(Horse horse) {
+        try {
+            var parentCriticals = jdbcTemplate.query(
+                    SQL_PARENT_COUNT,
+                    (rs, rowNum) -> rs.getInt("parentCnt") > 1,
+                    horse.getId()
+            );
+            for (boolean criticalSex: parentCriticals) {
+                if (criticalSex) return true;
+            }
+            return false;
+        } catch (DataAccessException e) {
+            throw new PersistenceException(e.getMessage(), e);
+        }
     }
 
     private void setRequestParams(Horse horse, PreparedStatement stmt) throws SQLException {

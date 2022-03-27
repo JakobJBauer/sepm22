@@ -75,6 +75,9 @@ public class HorseServiceImpl implements HorseService {
     public Horse updateHorse(Horse horse) {
         validator.horseValidation(horse);
         try {
+            if (dao.hasCriticalSex(horse) && dao.getHorseById(horse.getId()).getSex() != horse.getSex())
+                throw new ConflictException("horse is in an parent relationship not allowing sex changes");
+
             return dao.updateHorse(horse);
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage(), e);

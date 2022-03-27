@@ -25,5 +25,7 @@ public interface HorseDao {
 
     Horse updateHorse(Horse horse);
 
+    boolean hasCriticalSex(Horse horse);
+
     void deleteHorseById(Long id);
 }
