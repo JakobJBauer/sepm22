@@ -46,7 +46,7 @@ public class HorseJdbcDao implements HorseDao {
             " WHERE id = ?";
     private static final String SQL_DELETE_BY_ID = "DELETE FROM " + TABLE_HORSE + "  WHERE id = ?";
     private static final String SQL_GET_ANCESTOR_TREE = "WITH RECURSIVE ancestor_tree(id, name, birthdate, parent1, parent2, depth) AS (" +
-            " SELECT id, name, birthdate, parent1, parent2, 0 FROM " +
+            " SELECT id, name, birthdate, parent1, parent2, 1 FROM " +
             TABLE_HORSE_PARENTS +
             " WHERE id = ?" +
             " UNION ALL" +

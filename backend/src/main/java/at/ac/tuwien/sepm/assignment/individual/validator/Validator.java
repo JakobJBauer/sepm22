@@ -62,8 +62,8 @@ public class Validator {
     public void ancestorTreeMaxGenerationValidation(Integer maxGeneration) {
         LOGGER.trace("ancestorTreeMaxGenerationValidation({})", maxGeneration);
         if (maxGeneration != null) {
-            if (maxGeneration < 0)
-                failValidation("maxGeneration must be positive");
+            if (maxGeneration < 1)
+                failValidation("maxGeneration must be at least 1");
             if (maxGeneration > 50)
                 failValidation("Recursion depth too high. Maximum is 50");
         }
