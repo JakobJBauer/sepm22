@@ -137,9 +137,7 @@ public class HorseJdbcDao implements HorseDao {
         try {
             return jdbcTemplate.query(
                     SQL_SELECT_ALL,
-                    (rs, rowNum) -> {
-                        return this.mapRowAncestorHorse(rs, rowNum, maxGenerations);
-                    }
+                    (rs, rowNum) -> this.mapRowAncestorHorse(rs, rowNum, maxGenerations)
             );
         } catch (DataAccessException e) {
             throw new PersistenceException("Could not query all horses", e);
@@ -304,7 +302,7 @@ public class HorseJdbcDao implements HorseDao {
             var currParents = wrapper.lastDepthHorses.stream().filter((lastHorse) ->
                     {
                         try {
-                            return lastHorse.getId() == rs.getObject("parent1") || lastHorse.getId() == rs.getObject("parent2");
+                            return lastHorse.getId().equals(rs.getObject("parent1")) || lastHorse.getId().equals(rs.getObject("parent2"));
                         } catch (SQLException e) {
                             throw new PersistenceException("parents could bot be read ", e);
                         }
