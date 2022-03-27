@@ -95,7 +95,7 @@ public class HorseMapper {
                     basicHorseInputDto.parentIds()
             );
         } catch (NoResultException e) {
-            LOGGER.debug("No parents in InputDto");
+            LOGGER.debug("No owner in InputDto");
             return new Horse(
                     id,
                     basicHorseInputDto.name(),
@@ -120,7 +120,7 @@ public class HorseMapper {
                     basicHorseInputDto.parentIds()
             );
         } catch (NoResultException e) {
-            LOGGER.debug("No parents in InputDto");
+            LOGGER.debug("No owner in InputDto");
             return new Horse(
                     basicHorseInputDto.name(),
                     basicHorseInputDto.description(),
