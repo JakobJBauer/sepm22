@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.assignment.individual.entity.AncestorTreeHorse;
 import at.ac.tuwien.sepm.assignment.individual.entity.Horse;
 import at.ac.tuwien.sepm.assignment.individual.entity.SearchHorse;
 import at.ac.tuwien.sepm.assignment.individual.exception.NoResultException;
+import at.ac.tuwien.sepm.assignment.individual.exception.ValidationException;
 import at.ac.tuwien.sepm.assignment.individual.service.HorseService;
 import at.ac.tuwien.sepm.assignment.individual.service.OwnerService;
 import org.slf4j.Logger;
@@ -94,7 +95,7 @@ public class HorseMapper {
                     ownerService.getOwnerById(basicHorseInputDto.ownerId()),
                     basicHorseInputDto.parentIds()
             );
-        } catch (NoResultException e) {
+        } catch (ValidationException | NoResultException e) {
             LOGGER.debug("No owner in InputDto");
             return new Horse(
                     id,
@@ -119,7 +120,7 @@ public class HorseMapper {
                     ownerService.getOwnerById(basicHorseInputDto.ownerId()),
                     basicHorseInputDto.parentIds()
             );
-        } catch (NoResultException e) {
+        } catch (ValidationException | NoResultException e) {
             LOGGER.debug("No owner in InputDto");
             return new Horse(
                     basicHorseInputDto.name(),
